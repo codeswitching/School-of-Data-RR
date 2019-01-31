@@ -1,0 +1,80 @@
+---
+title: "Reproducible Research in R"
+subtitle: "Robert Mitchell + Lauren Steely <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>"
+author: "School of Data"
+date: "2019-02-01"
+output:
+  xaringan::moon_reader:
+    css: ["default", "metropolis", "metropolis-fonts"]
+    lib_dir: libs
+    nature:
+      beforeInit: "macros.js"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+class: inverse, center, middle
+
+# Synopsis
+
+So you've spent hours on a cool data analysis project - how do you share it with your colleagues, your stakeholders, or the public? And how do you ensure other analysts can reproduce what you've done?
+
+---
+class: inverse, center, middle
+
+# First, let's take a step back, what is it exactly that we're trying to avoid?
+
+---
+class: inverse
+background-image: url("images/spreadsheet-example.png")
+
+---
+class: inverse, center
+background-image: url("images/spreadsheet-example.png")
+
+# What's wrong with this picture?
+
+---
+# Do not use colored text or cell shading
+
+This formatting is lost when the data are exported or the file is opened in another program. Consider adding another column where the information indicated by the coloring and shading can be included in text form.
+
+---
+# Do not use commas
+
+When data are exported as a comma separated value (`.csv`) file, the commas within your data cells can cause confusion. They also sometimes indicate that multiple pieces of data (like city, state) are included in a single column. Separate data into multiple fields if appropriate or use another kind of separator (colon, semicolon -- but not a symbol!) if one is necessary. 
+
+---
+# Do not merge cells
+
+Cell merging is typically lost when data are exported and is often misread by other software programs. This may result in the shifting of data cells in the affected rows or columns. In the case shown here, the cells in `column 1` should be unmerged and the date information entered into the first cell in each row.
+
+---
+class: inverse
+background-image: url("images/merge-cell.jpg")
+
+---
+class: inverse, center, middle
+
+# How do we avoid this?
+
+---
+class: inverse, center, middle
+
+# REPRODUCIBILITY!
+
+---
+class: inverse, center, middle
+
+# Great! How do I get there?
+
+---
+# Two main 
+
+
+

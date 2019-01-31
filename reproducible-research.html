@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Reproducible Research in R</title>
+    <meta charset="utf-8">
+    <meta name="author" content="School of Data" />
+    <meta name="date" content="2019-02-01" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Reproducible Research in R
+## Robert Mitchell + Lauren Steely
+<html>
+<div style="float:left">
+
+</div>
+<hr color='#EB811B' size=1px width=796px>
+</html>
+### School of Data
+### 2019-02-01
+
+---
+
+
+
+
+class: inverse, center, middle
+
+# Synopsis
+
+So you've spent hours on a cool data analysis project - how do you share it with your colleagues, your stakeholders, or the public? And how do you ensure other analysts can reproduce what you've done?
+
+---
+class: inverse, center, middle
+
+# First, let's take a step back, what is it exactly that we're trying to avoid?
+
+---
+class: inverse
+background-image: url("images/spreadsheet-example.png")
+
+---
+class: inverse, center
+background-image: url("images/spreadsheet-example.png")
+
+# What's wrong with this picture?
+
+---
+# Do not use colored text or cell shading
+
+This formatting is lost when the data are exported or the file is opened in another program. Consider adding another column where the information indicated by the coloring and shading can be included in text form.
+
+---
+# Do not use commas
+
+When data are exported as a comma separated value (.csv) file, the commas within your data cells can cause confusion. They also sometimes indicate that multiple pieces of data (like city, state) are included in a single column. Separate data into multiple fields if appropriate or use another kind of separator (colon, semicolon -- but not a symbol!) if one is necessary. 
+
+---
+# Do not merge cells
+
+Cell merging is typically lost when data are exported and is often misread by other software programs. This may result in the shifting of data cells in the affected rows or columns. In the case shown here, the cells in column 1 should be unmerged and the date information entered into the first cell in each row.
+
+---
+class: inverse
+background-image: url("images/merge-cell.jpg")
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
