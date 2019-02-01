@@ -1,0 +1,66 @@
+---
+title: "R Notebook"
+date: "`r Sys.Date()`"
+author: "Who, me?"
+output: html_notebook
+---
+
+# Packages
+
+```{r}
+library(tidyverse)
+```
+
+# Data
+
+Where does this data come from? What do you want to say about it?
+
+```{r}
+starwars
+```
+
+# Analysis
+
+What's going on here?
+
+What would you want to say about this?
+
+```{r}
+starwars %>%
+  count(skin_color) %>%
+  arrange(desc(n)) %>%
+  slice(1:10) %>%
+  ggplot(aes(x = skin_color, y = n, fill = skin_color)) +
+  geom_col() +
+  labs(
+    title = "Top 10 most popular Skin Colors",
+    subtitle = "In the Starwars Universe",
+    x = "\nSkin Color", y = "Number\n",
+    caption = "data source: dplyr::starwars")
+```
+
+Explore and try to document what is working and what isn't.
+
+> If you're not sure really where to start and writing this `dplyr` or `ggplot2` code is intimidating you can run these code chunks below to get the hang of things. Try to document what is happenning in the code below.
+
+```{r}
+starwars %>% 
+  filter(species == "Droid")
+```
+
+```{r}
+starwars %>% 
+  select(name, ends_with("color"))
+```
+
+```{r}
+starwars %>% 
+  mutate(name, bmi = mass / ((height / 100)  ^ 2)) %>%
+  select(name:mass, bmi)
+```
+
+```{r}
+starwars %>% 
+  arrange(desc(mass))
+```
+

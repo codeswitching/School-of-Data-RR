@@ -1,0 +1,642 @@
+---
+title: "Reproducible Research in R"
+subtitle: "Robert Mitchell + Lauren Steely <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>"
+author: "School of Data"
+date: "2019-02-01"
+output:
+  xaringan::moon_reader:
+    css: ["default", "metropolis", "metropolis-fonts"]
+    lib_dir: libs
+    nature:
+      beforeInit: "macros.js"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+# Follow along
+<br>
+### GitHub repository for slides + examples 
+<br>
+### `https://github.com/robertmitchellv/School-of-Data-RR`
+
+---
+class: inverse, center, middle
+
+# Synopsis
+
+So you've spent hours on a cool data analysis project; how do you share it with your colleagues, your stakeholders, or the public? And how do you ensure other analysts can reproduce what you've done?
+
+---
+class: inverse, center, middle
+
+# First, let's take a step back, what is it exactly that we're trying to avoid?
+
+---
+class: inverse
+background-image: url("images/spreadsheet-example.png")
+
+---
+class: inverse, center
+background-image: url("images/spreadsheet-example.png")
+
+# What's wrong with this picture?
+
+---
+# Do not use colored text or cell shading
+
+<br>
+
+This formatting is lost when the data are exported or the file is opened in another program. Consider adding another column where the information indicated by the coloring and shading can be included in text form.
+
+---
+# Do not use commas
+
+<br>
+
+When data are exported as a comma separated value (`.csv`) file, the commas within your data cells can cause confusion. They also sometimes indicate that multiple pieces of data (like city, state) are included in a single column. Separate data into multiple fields if appropriate or use another kind of separator (colon, semicolon -- but not a symbol!) if one is necessary. 
+
+---
+# Do not merge cells
+
+<br>
+
+Cell merging is typically lost when data are exported and is often misread by other software programs. This may result in the shifting of data cells in the affected rows or columns. In the case shown here, the cells in `column 1` should be unmerged and the date information entered into the first cell in each row.
+
+---
+class: inverse
+background-image: url("images/merge-cell.jpg")
+
+---
+class: inverse, center, middle
+
+# How do we avoid this?
+
+---
+class: inverse, center, middle
+
+# REPRODUCIBILITY!
+
+---
+class: inverse, center, middle
+
+# Great! How do I get there?
+
+---
+# The two levels of reproducibility
+
+<br>
+
+## `r emo::ji("point_right")` The information organization / knowledge organization level
+
+<br>
+
+## `r emo::ji("point_right")` The tooling that helps you accomplish the above
+
+---
+class: center, middle
+
+## We'll split our time between the two levels--the conceptual thinking and how it is implemented practically leveraging tools in `R` `r emo::ji("raised_hands")`
+
+---
+class: inverse, center, middle
+
+# Let's begin with a paradigm shift in coding that we've noticed
+
+---
+# Script vs Notebook
+
+.pull-left[
+### `R` Script
+
+* Commenting code `r emo::ji("point_right")`
+  + No way to distinguish text, limited formatting, dense
+* All source, no presentation layer `r emo::ji("point_right")`
+]
+
+.pull-right[
+### `Rmd` Document
+
+* Mixture of markdown and code
+  + Ability to format text, expand comments, document thinking, problems, worries, fears
+* Source code, with presentation layer
+]
+
+---
+# Script vs Notebook
+
+.pull-left[
+### `R` Script
+
+```{r eval=F}
+# comment explaining how 
+# I'm using ISLR::Auto
+# but assigning it to `auto` 
+# while also using 
+# janitor::clean_names()
+auto %>%
+  lm(mpg ~ horsepower, data = .) %>%
+  tidy()
+```
+]
+
+.pull-right[
+### `Rmd` Document
+
+__Linear Regression__
+
+You can write the formula
+
+$$ \hat{Y}=\hat{\beta}_0+\hat{\beta}_1X_1+\cdots+\hat{\beta}_pX_p $$
+
+Talk about it more, about how the data is from `ISLR::Auto` and how you used `janitor::clean_names()` and assigned it to `auto <- ...`
+
+```{r eval=F}
+auto %>%
+  lm(mpg ~ horsepower, data = .) %>%
+  tidy()
+```
+]
+
+---
+class: inverse, center, middle
+
+# My take is that the notebook is _cathartic_, it can be one part computational powerhouse, one part diary, all parts documented and preserved--successes and failures.
+
+---
+# What is a code chunk?
+
+<br>
+
+The way that `Rmd` files work is that the `R` code you want to execute is placed within what is generally referred to as a __code chunk__. This is what one looks like:
+
+<pre class="markdown"><code>&#96;&#96;&#96;{r}
+# R code goes below
+
+&#96;&#96;&#96;
+</code></pre>
+
+---
+# Code chunks (continued)
+
+<br>
+
+Code chunks can also be named, with certain functionality turned on or off as well as other arguments changed. For example, to include a chunk but not execute it you would write:
+
+<pre class="markdown"><code>&#96;&#96;&#96;{r eval=FALSE}
+# R code goes below
+
+&#96;&#96;&#96;
+</code></pre>
+
+<br>
+
+To hide a chunk so it doesn't appear in your report, you would write:
+
+<pre class="markdown"><code>&#96;&#96;&#96;{r include=FALSE}
+# R code goes below
+
+&#96;&#96;&#96;
+</code></pre>
+
+---
+class: inverse, center, middle
+
+# There are _many_ other customizations, but to keep things simple turning evaluation on or off and showing or hiding a code chunk will help you through a majority of reporting issues.
+
+---
+# Documenting an analysis
+
+<br>
+
+## Let's break into small groups and work on documenting a toy analysis with our neighbors
+
+<br>
+
+If you don't know what data you should use, you can use the `dplyr::starwars` data set or open this file in the `examples/starwars` directory on GitHub
+
+```
+└── examples
+    └── starwars
+*       ├── starwars-analysis.Rmd
+        └── starwars-analysis.nb.html
+```
+
+---
+# Starwars Analysis
+
+<br>
+
+You can try opening this file to see what your notebook would look like; RStudio is taking the `Rmd` file and automatically creating this `html` file that you can use as a report
+
+```
+└── examples
+    └── starwars
+        ├── starwars-analysis.Rmd
+*       └── starwars-analysis.nb.html
+```
+
+---
+# Starwars Analysis
+
+<br>
+
+The brilliant thing about the `.nb.html` file, is that this document can be shared with colleagues, stakeholders, your boss; anyone that needs to know what you've been able to demonstrate with the data.
+
+<br>
+
+You're already making good progress!
+
+---
+class: inverse, center, middle
+
+# Anyone want to share some takeaways from this exercise?
+
+---
+# Naming conventions
+
+<br>
+
+There are many conventions and I would encourage you to think about your project and how best it could be organized.
+
+<br>
+
+There is no _canon_ here. Nevertheless, I can share some of the things that has worked in connection to data science projects to at least give you all an `r emo::ji("bulb")` of how you could approach naming and organizing.
+
+---
+# Main Directories (Folders)
+
+I like the following main directories
+
+```
+└── project-root
+    ├── data
+    ├── docs
+    ├── models
+    ├── notebooks
+    └── reports
+```
+
+---
+# Main Directories (Folders)
+
+<br>
+
+* `data` is where all data and metadata is stored
+* `docs` is where all text documents _about_ the project are stored
+* `models` is where you can save the models you are developing, building, and deploying
+* `notebooks` is where you can put your `Rmd` files
+* `reports` is for all the things that are written from `Rmd` into another format, e.g., `xlsx`, `png`, et cetera
+
+---
+# Closer look: 'data' directory
+
+<br>
+
+The `data` directory should have the following sub-directories
+
+```
+└── data
+    ├── external
+    ├── raw
+    ├── interim
+    └── tidy
+```
+
+---
+# Closer look: 'data' directory
+
+<br>
+
+You don't need to over-complicate your project with so many granular levels for your data, but here is an example, the two most important directories are highlighted.
+
+```
+└── data
+    ├── external
+*   ├── raw
+    ├── interim
+*   └── tidy
+```
+
+---
+# Closer look: 'docs' directory
+
+<br>
+
+This is a great chance to add any information that is associated with the project in any useful way. References is not the most exciting name, but it's important to have a place to put footnotes that reference other documents someplace. Other names could be `exhibits`, et cetera.
+
+```
+└── docs
+    └── references
+```
+
+---
+# Closer look: `reports` directory
+
+<br>
+
+I like to keep visualization files (`png` or `jpg`) in `figures`, however, you can decide what you feel is best.
+
+```
+└── reports
+    └── figures
+```
+
+---
+# Naming your notebooks
+
+<br>
+
+I like to think of notebooks in a functional way, i.e., that the notebook has a specific goal to achieve and that it shouldn't try to do too much. To illustrate, here's an example of what I mean:
+
+```
+└── notebooks
+    ├── 00-read-and-join-data.Rmd
+    ├── 01-tidy-and-write-interim.Rmd
+    ├── 02-transform-and-write-tidy.Rmd
+    ├── 03-model-preprocess.Rmd
+    ├── 04-model-fit.Rmd   
+    └── 05-model-results-performance.Rmd
+```
+
+---
+class: inverse, center, middle
+
+# Numbering the notebooks and giving them specific jobs to do helps you stay organized in your code and ensures that the pieces of your workflow follow a logical order.
+
+---
+# Naming your notebooks
+
+<br>
+
+You can dial up or down the granularity by including an additional level of directories depending on your project. For example:
+
+```
+└── notebooks
+    ├── project-a 
+    │   ├── 00-read-and-join-data.Rmd
+    │   ├── 01-tidy-and-write-interim.Rmd
+    │   ├── 02-transform-and-write-tidy.Rmd
+    │   ├── 03-model-preprocess.Rmd
+    │   ├── 04-model-fit.Rmd   
+    │   └── 05-model-results-performance.Rmd
+    └── project-b
+        ├── 00-read-and-join-geo-data.Rmd
+        ├── 01-build-test-leaflet-maps.Rmd
+        └── 02-present-geo-analysis-results.Rmd
+```
+
+---
+class: inverse, center, middle
+
+# It's up to you how much nested structure you want to include into your project--complexity runs the risk of, on the one hand, being more precise; and, on the other hand, being too difficult to understand. Reproducibility is about striking that balance.
+
+---
+# Let's move into the second level
+
+<br>
+
+### Now that we've had a chance to tackle some of the ways we can _think_ about the structure of our project, let's move on to the tools you can use to accomplish this more easily!
+
+---
+# Project creation
+
+<br>
+
+.pull-left[
+`usethis`
+]
+
+.pull-right[
+(https://github.com/r-lib/usethis)
+]
+
+A fantastic `R` package to help you quickly build new projects once you've done your thinking about how you want them set up.
+
+---
+# GitHub ignores
+
+<br>
+
+Quickly set up your `.gitignore` file
+
+```{r eval=FALSE}
+library(usethis)
+
+# Files for git to ignore
+#  'scratch_*.*' means that anything you name with 'scratch_' first will be
+#  ignored so you don't commit and push your random notes/bug fixes
+ignores <- c(
+  ".Rhistory", ".RData", ".Rproj.user",
+  "scratch_*.*", ".DS_Store"
+)
+```
+
+---
+# Create the project
+
+<br>
+
+```{r eval=FALSE}
+# Create project using the current working directory
+#  It was necessary to open create_project.R in RStudio for an .Rproj file
+#  to be successfully created. Also 'use_description()' will only work if
+#  the project name meets the same criteria as a package name, so the '-'
+#  messed things up--without a 'DESCRIPTION' file, the 'use_gpl3_license()'
+#  won't work.
+create_project(path = getwd())
+use_description()
+use_git_ignore(ignores = ignores)
+use_gpl3_license(name = "Robert Mitchell")
+```
+
+---
+# Create project directories
+
+<br>
+
+Now you can create the project directories we talked about earlier.
+
+```{r eval=FALSE}
+# Create project directories
+use_directory("data")
+use_directory("docs")
+use_directory("models")
+use_directory("notebooks")
+use_directory("reports")
+
+# Create project subdirectories
+use_directory("data/external")
+use_directory("data/raw")
+use_directory("data/interim")
+use_directory("data/tidy")
+use_directory("docs/references")
+use_directory("reports/figures")
+```
+
+---
+class: inverse, center, middle
+
+# Try to set up your own script with the 'usethis' package!
+
+---
+# Choose your own adventure
+
+<br>
+
+You can _usethis_ example `r emo::ji("sweat_smile")`
+
+```
+└── examples
+    └── usethis
+*       └── create_project.R
+```
+
+---
+class: inverse, center, middle
+
+# Any thoughts on the exercise?
+
+---
+# Taking your notebooks to the next level
+
+<br>
+
+One of the amazing things that `Rmd` documents can do is easily be connected together and hosted online. __YES__, you can create a website with `rmarkdown` `r emo::ji("tada")`
+
+---
+# Shameless self promotion
+
+<br>
+
+I created my website with `rmarkdown` so you can see both an example of what it looks like and play with the code I used to see how it works
+
+* `robertmitchellv.com`
+
+* `https://github.com/robertmitchellv/robertmitchellv.github.io`
+
+---
+# Creating websites
+
+<br>
+
+The documentation for doing this is really good; you should consult it if you want to dive into this area
+
+* `https://rmarkdown.rstudio.com/lesson-13.html`
+
+* I also have a blog post about it as well:
+`http://robertmitchellv.com/blog-building-site-with-rmarkdown.html`
+
+---
+class: inverse, center, middle
+
+# Let's look at a simpler example of how to do this that also takes highlights how powerful notebooks are
+
+---
+# ISLR notes
+
+<br>
+
+Start by navigating to the `Index.html` file and openning it
+
+```
+└── examples
+    └── islr
+        ├── 01-introduction.Rmd
+        ├── 01-introduction.html
+        ├── 02-statistical-learning.Rmd
+        ├── 02-statistical-learning.html
+        ├── 03-linear-regression.Rmd
+        ├── 03-linear-regression.html
+        ├── 04-classification.Rmd
+        ├── 04-classification.html
+        ├── 04-classification_files
+        ├── Index.Rmd
+*       ├── Index.html
+        ├── README.md
+        ├── _site.yml
+        ├── data
+        └── style.css
+```
+
+---
+class: inverse, center, middle
+
+# How does this work? `r emo::ji("thinking")`
+
+---
+# Linking notes together
+
+The important file here is the `_site.yml`, which contains the following important settings--the `href:` section is what links the `Rmd` files together.
+
+```{yaml eval=FALSE}
+name: "ISLR Notes"
+output_dir: "."
+navbar:
+  title: "ISLR Notes"
+  left:
+    - text: "Chapter Notes"
+      icon: fa-line-chart
+      menu:
+        - text: "Chapter 1"
+          icon: fa-code
+*         href: 01-introduction.html
+        - text: "Chapter 2"
+          icon: fa-code
+*         href: 02-statistical-learning.html
+        - text: "Chapter 3"
+          icon: fa-code
+*         href: 03-linear-regression.html
+  right:
+    - icon: fa-book fa-lg
+      href: http://www-bcf.usc.edu/~gareth/ISL/
+output:
+  html_document:
+    theme: yeti
+    css: style.css
+```
+
+---
+# Creating pseudo-interactive dashboards
+
+<br>
+
+Start by navigating to the `water-dashboard` example
+
+```
+└── examples
+    └── water-dashboard
+*       └── Water_Dashboard_-_for_SoD.html
+```
+
+This is an `Rmd` based dashboard Lauren created
+
+---
+# Dip your toes into dashboards
+
+<br>
+
+See all the examples here:
+`https://rmarkdown.rstudio.com/flexdashboard/examples.html`
+
+There is a blank `flexdashboard` you can play with 
+
+```
+└── examples
+    └── flexdashboard
+*       └── blank.Rmd
+```
+
+---
+class: inverse, center, middle
+
+# Questions?
+
+---
+class: inverse, center, middle
+
+# Thank you! `r emo::ji("pray")`

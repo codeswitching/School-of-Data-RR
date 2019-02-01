@@ -1,0 +1,15 @@
+# R related
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# Hide directories
+scratch_*.*
+.archive/
+
+# For shinyapps.io
+rsconnect/
+
+# macOS
+.DS_Store
