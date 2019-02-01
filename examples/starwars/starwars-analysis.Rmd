@@ -1,13 +1,15 @@
 ---
 title: "R Notebook"
-date: "`r Sys.Date()`"
 author: "Who, me?"
-output: html_notebook
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
 ---
 
 # Packages
 
-```{r}
+```{r include=F}
 library(tidyverse)
 ```
 
