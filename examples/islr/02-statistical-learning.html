@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Robert Mitchell" />
+
+<meta name="date" content="2018-03-18" />
+
+<title>ISLR Chapter 2: Statistical Learning</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 45px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+
+.section h2 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h3 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h4 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h5 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h6 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">ISLR Notes</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-line-chart"></span>
+     
+    Chapter Notes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01-introduction.html">
+        <span class="fa fa-code"></span>
+         
+        Chapter 1
+      </a>
+    </li>
+    <li>
+      <a href="02-statistical-learning.html">
+        <span class="fa fa-code"></span>
+         
+        Chapter 2
+      </a>
+    </li>
+    <li>
+      <a href="03-linear-regression.html">
+        <span class="fa fa-code"></span>
+         
+        Chapter 3
+      </a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="http://www-bcf.usc.edu/~gareth/ISL/">
+    <span class="fa fa-book fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">ISLR Chapter 2: Statistical Learning</h1>
+<h4 class="author"><em>Robert Mitchell</em></h4>
+<h4 class="date"><em>2018-03-18</em></h4>
+
+</div>
+
+
+<p><em>last updated on 2018-05-17</em></p>
+<p><br></p>
+<div id="packages" class="section level1">
+<h1>Packages</h1>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── [1mAttaching packages[22m ───────────────────────────────────────────────────────────────────── tidyverse 1.2.1.[31m9000[39m ──</code></pre>
+<pre><code>## [32m✔[39m [34mggplot2[39m 2.2.1.[31m9000[39m     [32m✔[39m [34mpurrr  [39m 0.2.4     
+## [32m✔[39m [34mtibble [39m 1.4.2          [32m✔[39m [34mdplyr  [39m 0.7.4     
+## [32m✔[39m [34mtidyr  [39m 0.8.0          [32m✔[39m [34mstringr[39m 1.3.1     
+## [32m✔[39m [34mreadr  [39m 1.1.1          [32m✔[39m [34mforcats[39m 0.3.0</code></pre>
+<pre><code>## ── [1mConflicts[22m ───────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## [31m✖[39m [34mdplyr[39m::[32mfilter()[39m masks [34mstats[39m::filter()
+## [31m✖[39m [34mdplyr[39m::[32mlag()[39m    masks [34mstats[39m::lag()
+## [31m✖[39m [34mdplyr[39m::[32mvars()[39m   masks [34mggplot2[39m::vars()</code></pre>
+<pre class="r"><code>library(hrbrthemes)
+library(patchwork)</code></pre>
+</div>
+<div id="notes" class="section level1">
+<h1>Notes</h1>
+<div id="section" class="section level2">
+<h2>2.1</h2>
+<p>When exploring relationships between variables in data to make predictions there can be a lot of confusing language used to describe <em>input variables</em> and the <em>output variable</em>.</p>
+<p><strong>Input variables</strong>:</p>
+<ul>
+<li>Can be denoted by <span class="math inline">\(\text{X}\)</span> or <span class="math inline">\(\text{X}_{1},\text{X}_{2}\)</span> if using more than one variable</li>
+<li>Also goes by other names
+<ul>
+<li><em>predictors</em></li>
+<li><em>independent variables</em></li>
+<li><em>features</em></li>
+<li>sometimes just <em>variables</em></li>
+</ul></li>
+</ul>
+<p><strong>Output variable</strong>:</p>
+<ul>
+<li>Typically denoted using <span class="math inline">\(\text{Y}\)</span></li>
+<li>Also goes by other names
+<ul>
+<li><em>response</em></li>
+<li><em>dependent variable</em></li>
+</ul></li>
+</ul>
+<p>The relationship between the input (<span class="math inline">\(X=(X_{1},X_{2},\ldots,X_{p})\)</span>) and output (<span class="math inline">\(Y\)</span>) variable can be denoted as:</p>
+<p><span class="math display">\[ 
+Y=f(X) + \epsilon 
+\tag{2.1}
+\]</span></p>
+<table>
+<thead>
+<tr class="header">
+<th><strong>Math</strong></th>
+<th><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(f\)</span></td>
+<td>some fixed but unknown function of <span class="math inline">\(X_{1},\ldots,X_{p}\)</span><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\epsilon\)</span></td>
+<td>is a random <em>error term</em>, which is independent of <span class="math inline">\(X\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>An example from the <code>Income2</code> data set</p>
+<p><strong>Read data and clean names</strong></p>
+<pre class="r"><code>income &lt;- read_csv(&quot;data/Income2.csv&quot;) %&gt;% janitor::clean_names()</code></pre>
+<pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   X1 = col_integer(),
+##   Education = col_double(),
+##   Seniority = col_double(),
+##   Income = col_double()
+## )</code></pre>
+<p><strong>Plot and fit a <code>loess</code> line</strong></p>
+<pre class="r"><code>income %&gt;%
+  ggplot(aes(x = education, y = income)) +
+  geom_jitter() +
+  geom_smooth(method = &quot;loess&quot;, se = F) +
+  theme_ipsum_rc()</code></pre>
+<p><img src="02-statistical-learning_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>The blue line represents the <span class="math inline">\(f\)</span> that connects the input variable to the output variable, which in general is unknown. The distance between data points and the <span class="math inline">\(f\)</span> line represent the error terms <span class="math inline">\(\epsilon\)</span></p>
+<blockquote>
+<p>Effectively <em>Statistical Learning</em> refers to a set of approaches for estimating <span class="math inline">\(f\)</span></p>
+</blockquote>
+<div id="section-1" class="section level3">
+<h3>2.1.1</h3>
+<p>Two reasons we would want to estimate <span class="math inline">\(f\)</span>:</p>
+<ul>
+<li>Prediction</li>
+<li>Inference</li>
+</ul>
+<div id="prediciton" class="section level4">
+<h4>Prediciton</h4>
+<p>In many situations a set of inputs <span class="math inline">\(\text{X}\)</span> are readily available, but the output <span class="math inline">\(\text{Y}\)</span> cannot be easily obtained. When error terms average to 0 (which I imagine means that the distance between the data points and the <span class="math inline">\(f\)</span> fit varry a little but average out to 0) we can predict <span class="math inline">\(\text{Y}\)</span> using:</p>
+<p><span class="math display">\[ 
+\hat{Y}=\hat{f}(X)+\epsilon \tag{2.2}
+\]</span></p>
+<table>
+<colgroup>
+<col width="13%" />
+<col width="86%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Math</strong></th>
+<th><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\hat{f}\)</span></td>
+<td>our estimate for <span class="math inline">\(f\)</span> (often treated as a <em>black box</em> in the sense that people usually don’t care what form it takes so long as it accurately predicts <span class="math inline">\(Y\)</span>)</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\hat{Y}\)</span></td>
+<td>the resulting prediction for <span class="math inline">\(Y\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\epsilon\)</span></td>
+<td>difference between predicted values and data</td>
+</tr>
+</tbody>
+</table>
+<p>Accuracy of <span class="math inline">\(\hat{Y}\)</span> depends on two quantities, i.e., <span class="math inline">\(\epsilon\)</span> has two underlying dimentions:</p>
+<ul>
+<li>Reducible error</li>
+<li>Irreducible error</li>
+</ul>
+<p><strong>Reducible error</strong>: the part of the model that <em>can</em> be reduced because a known pattern exists in the data <strong>Irreducible error</strong>: the part of the model that <em>cannot</em> be reduced because we either have not yet created a method that exists to further reduce error or there is some unknown variable or pattern that we do not yet understand about the relationship between the data and the variables.</p>
+<blockquote>
+<p>Suppose I am interested predicting demand for a particular product in city <span class="math inline">\(X\)</span> for the coming month. I’ve collected the last 5 years’ data for demand, price, the competitor’s product availability, advertisement expenditure, customer feedback et cetera (whatever variables affect the demand for this product). This data is known as the <strong>training set</strong>, which includes the <strong>outcome</strong> or <strong>response</strong> variable, i.e., “demand” as well as all these related variables known as <strong>predictors</strong>, <strong>features</strong>, or <strong>inputs</strong>.</p>
+<p>Based on this training data set, I’ve built a predictive model and use it to predict (or <strong>forecast</strong>) “demand” for the next month. After one month has passed, I want to check how well my model performed given the actual demand. Predicted values cannot match perfectly with the observed values for all inputs but we <em>can</em> try to see how close we can get.</p>
+<p>I’ve computed the differences between the actual demand and my predicted values of demand for all inputs. These differences are known as <strong>errors</strong>. Now this error can be further split into two parts: <strong>reducible</strong> and <strong>irreducible error</strong>.</p>
+<p>Assume that some other person has also tried to do the same job and come up with a different model and their errors are less than (or greater than) that of mine. It shows that some part of the errors can be <em>reduced</em> by improving the model. This part is known as reducible error.</p>
+<p>But still there is some error left which, for now, cannot be further reduced as it is due to some <em>unknown</em> factor. For example, there might be other variables that impact demand but are unable to be measured or even some unpredictable variable that we just don’t understand yet. The error that cannot be reduced further is known as the <em>irreducible error</em>. <strong>Edited from <a href="https://www.quora.com/Could-someone-describe-reducible-and-irreducible-errors-in-laymans-terms">Source</a></strong></p>
+</blockquote>
+<p>Consider an estimate <span class="math inline">\(\hat{f}\)</span> and a set of predictors <span class="math inline">\(X\)</span>, which yields the prediction <span class="math inline">\(\hat{Y}=\hat{f}(X)\)</span>. Assume that both <span class="math inline">\(\hat{f}\)</span> and <span class="math inline">\(X\)</span> are fixed. Then we can show that</p>
+<p><span class="math display">\[
+\begin{aligned}
+E(Y-\hat{Y})^{2} &amp;= E[f(X)+\epsilon \ -\hat{f}(X)]^{2} \\
+&amp;=\underbrace{[f(X)- \ \hat{f}(X)]^{2}}_{reducible \ error} \ + \ \underbrace{Var(\epsilon)}_{irreducible \ error}
+\end{aligned}
+\tag{2.3}
+\]</span></p>
+<table>
+<colgroup>
+<col width="13%" />
+<col width="86%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Math</strong></th>
+<th><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(E(Y-\hat{Y})^{2}\)</span></td>
+<td>the average, or <em>expected value</em> of the squared difference between the predicted and actual value of <span class="math inline">\(Y\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(Var(\epsilon)\)</span></td>
+<td>the <em>variance</em> associated with the error term <span class="math inline">\(\epsilon\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Our goal is to predict <span class="math inline">\(Y\)</span> while minimizing reducable errors as best as practicable</p>
+</div>
+<div id="inference" class="section level4">
+<h4>Inference</h4>
+<p>When you need to understand the way that <span class="math inline">\(Y\)</span> is affected as <span class="math inline">\(X_{1}, \ldots, X_{p}\)</span> change then you are no longer able to treat <span class="math inline">\(\hat{f}\)</span> as a black box–because you are specifically interested in the relationship between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, i.e., how <span class="math inline">\(Y\)</span> changes as a function of <span class="math inline">\(X_{1}, \ldots, X_{p}\)</span>. When openning the black box to inspect how the model works, we may be trying to answer one of these questions:</p>
+<ul>
+<li><em>Which predictors are associated with the response</em>?</li>
+<li><em>What is the relationship between the response and each predictor</em>?</li>
+<li><em>Can the relationship between <span class="math inline">\(Y\)</span> and each predictor be adequately summarized using a linear equation, or is the relationship more complicated?</em></li>
+</ul>
+<p>Generally when employing a statistical learning model, your question will fall into one or both focus areas: the <strong>prediction</strong> space, the <strong>inference</strong> space, or both the <em>predication</em> and <em>inference</em> space.</p>
+<p>Depending on whether prediction, inference, or both is the goal there are different methods for estimating <span class="math inline">\(f\)</span> that may be more or less appropriate.</p>
+<ul>
+<li><strong>Linear models</strong>: simple and interpretable inference but may not yield as acurate predictions as other approaches.</li>
+<li><strong>Non-linear models</strong>: can provide acurate predictions of <span class="math inline">\(Y\)</span> but at the expense of a less interpretable model for which inference is more challenging</li>
+</ul>
+</div>
+</div>
+<div id="section-2" class="section level3">
+<h3>2.1.2</h3>
+<p><strong>How do we estimate for <span class="math inline">\(f\)</span>?</strong></p>
+<p>There are many linear and non-linear approaches but many share a set of characteristics that we need to understand.</p>
+<table>
+<colgroup>
+<col width="13%" />
+<col width="86%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Term</strong></th>
+<th><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><em>training data</em></td>
+<td>use these observations to train, or teach, our method how to estimate <span class="math inline">\(f\)</span></td>
+</tr>
+<tr class="even">
+<td><em>parametric</em></td>
+<td>assuming the shape of the functional form of <span class="math inline">\(f\)</span>, e.g., assuming the shape is <em>linear</em> <strong>structured</strong></td>
+</tr>
+<tr class="odd">
+<td><em>non-parametric</em></td>
+<td>not making explicit assumptions about the functional form of <span class="math inline">\(f\)</span>; rather, seeking out an estimate of <span class="math inline">\(f\)</span> that gets as close to the data points as possible without being too rough or wiggly <strong>unstructured</strong></td>
+</tr>
+<tr class="even">
+<td><em>fit</em></td>
+<td>using the training data on the model you selected; the degree to which it is successful can be described in the same way you fit a shirt to a body; does the shirt match the true form of <span class="math inline">\(f\)</span>? You don’t know until you put it on</td>
+</tr>
+<tr class="odd">
+<td><em>train</em></td>
+<td>when the model is learning from the training data; it is <em>training</em> to either predict an output or to better understand or amplify a hidden feature or relationship of some kind</td>
+</tr>
+<tr class="even">
+<td><em>least squares</em></td>
+<td>the most common way to fitting a model (discussed more in CH3)</td>
+</tr>
+<tr class="odd">
+<td><em>flexible</em></td>
+<td>a way to describe a model as having the ability to fit many different possible functional forms</td>
+</tr>
+<tr class="even">
+<td><em>overfitting</em></td>
+<td>when the model follows the errors too closely and produces a fit that too tightly fits the data; like a pair of pants so tight you couldn’t actually put them on or take them off</td>
+</tr>
+<tr class="odd">
+<td><em>noise</em></td>
+<td>the data that does not aid or isn’t related to <span class="math inline">\(\hat{f}\)</span></td>
+</tr>
+<tr class="even">
+<td><em>thin-plate spline</em></td>
+<td>this approach does not impose any pre-specified model on <span class="math inline">\(f\)</span>. It instead attempts to produce an estimate for <span class="math inline">\(f\)</span> that is as close as possible to the observed data, subject to the fit being <em>smooth</em> <strong>non-parametric model</strong></td>
+</tr>
+</tbody>
+</table>
+<div id="training-data" class="section level4">
+<h4>Training Data</h4>
+<p>Let <span class="math inline">\(x_{ij}\)</span> represent the value of the <span class="math inline">\(j\)</span>th predictor, or input, for observation <span class="math inline">\(i\)</span> where <span class="math inline">\(y_{i}\)</span> represents the response variable for the <span class="math inline">\(i\)</span>th observation:</p>
+<p><span class="math display">\[
+\begin{aligned}
+i &amp;= 1,2,\ldots, n \\
+j &amp;= 1,2,\ldots, p \\
+\{(x_{1},y_{1}), (x_{2},y_{2}),\ldots, (x_{n},y_{n})\} \ where \ 
+x_{1} &amp;= (x_{i1}, x_{i2}, \ldots, x_{ip})^{T}
+\end{aligned}
+\tag{p 21}
+\]</span></p>
+<p>The goal is to apply the statistical learning model to the training data in order to estimate the unknown function <span class="math inline">\(f\)</span>, which is to say: <strong>we want to find a function <span class="math inline">\(\hat{f}\)</span> such that <span class="math inline">\(Y\approx \hat{f}(X)\)</span> for any observation <span class="math inline">\((X,Y)\)</span></strong></p>
+</div>
+<div id="parametric" class="section level4">
+<h4>Parametric</h4>
+<pre class="r"><code>income %&gt;%
+  ggplot(aes(x = income, y = education)) +
+  geom_jitter(aes(color = seniority)) +
+  geom_smooth(method = &quot;lm&quot;, se = F, color = &quot;black&quot;, linetype = 2) +
+  scale_color_distiller(palette = &quot;Spectral&quot;) +
+  theme_ipsum_rc()</code></pre>
+<p><img src="02-statistical-learning_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>We are making an asumption that <span class="math inline">\(f\)</span> is linear in the above example. Which means:</p>
+<p><span class="math display">\[ 
+f(X)=\beta_{0} \ + \ \beta_{1}X_{1} \ + \ \beta_{2}X_{2} \ + \ \ldots \ + \ \beta_{p}X_{p} 
+\tag{2.4}
+\]</span></p>
+<p>This is simpler because we no longer need to estimate an arbitrary <span class="math inline">\(p\)</span>-dimensional function <span class="math inline">\(f(X)\)</span>; rather, we only need estimate the <span class="math inline">\(p+1\)</span> coefficients <span class="math inline">\(\beta_{0}, \beta_{1}, \ldots, \beta{p}\)</span></p>
+</div>
+<div id="train" class="section level4">
+<h4>Train</h4>
+<p>To <em>train</em> a model, using the linear example above, we need to estimate the parameters <span class="math inline">\(\beta_{0}, \beta_{1}, \ldots, \beta_{p}\)</span> which means we want to find the values of these parameters such that:</p>
+<p><span class="math display">\[
+Y \approx \beta_{0} \ + \ \beta_{1}X_{1} \ + \ \beta_{2}X_{2} \ + \ \ldots \ + \ \beta_{p}X_{p}  
+\tag{p 21}
+\]</span></p>
+<p>This translates to:</p>
+<p><span class="math display">\[
+income \ \approx \beta_{0} \ + \ \beta_{1} \times \ education \ + \ \beta_{2} \ \times \ seniority
+\tag{p 22}
+\]</span></p>
+<p>The linear fit line above (dotted line) is not <em>quite</em> right but it does a reasonable job of capturing the positive relationship between years of <code>education</code> and <code>income</code> as well as the slightly less positive relationship between <code>seniority</code> and <code>income</code>.</p>
+</div>
+<div id="non-parametric" class="section level4">
+<h4>Non-parametric</h4>
+<p>Can sometimes fit the data perfectly but can introduce problems like <em>over-fitting</em>, which is a problem because under-fitting and over-fitting both do not produce accurate estimates of the response on new observations that were not part of the original training data set.</p>
+</div>
+</div>
+<div id="section-3" class="section level3">
+<h3>2.1.3</h3>
+<p><strong>Prediction accuracy v model interpretability</strong></p>
+<p>Models range in how flexible and restrictive they can be in connection to the range of shapes to estimate <span class="math inline">\(f\)</span>, e.g., linear regression is a relatively inflexible approach since it only generates linear shapes to estimate <span class="math inline">\(f\)</span>. Other models can generate many possible shapes for <span class="math inline">\(f\)</span>, which begs the question: <em>why would we ever choose to use a more restrictive method instead of a very flexible approach?</em> If our goal is inference then restrictive models can help us better understand the relationship between <span class="math inline">\(Y\)</span> and <span class="math inline">\(X_{1},X_{2},\ldots,X_{p}\)</span>. Very flexible models can lead to such complicated estimates of <span class="math inline">\(f\)</span> that it becomes difficult to understand how an individual predictor is associated with the response.</p>
+</div>
+<div id="section-4" class="section level3">
+<h3>2.1.4</h3>
+<p><strong>Supervised v unsupervised learning</strong></p>
+<table>
+<colgroup>
+<col width="13%" />
+<col width="86%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Term</strong></th>
+<th><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><em>Supervised</em></td>
+<td>a model that for each observation of the predictor measurement(s) there is an associated response measurement</td>
+</tr>
+<tr class="even">
+<td><em>Unsupervised</em></td>
+<td>a model that does not have a response variable and does not use one; i.e., when you lack a response variable to <em>supervise</em> the analysis</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="section-5" class="section level3">
+<h3>2.1.5</h3>
+<p><strong>Regression v classification</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th><strong>Term</strong></th>
+<th><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><em>quantitative</em></td>
+<td>numerical values <strong>discrete</strong></td>
+</tr>
+<tr class="even">
+<td><em>qualitative</em></td>
+<td>values in one of <span class="math inline">\(K\)</span> different <em>classes</em> <strong>categorical</strong></td>
+</tr>
+<tr class="odd">
+<td><em>regression</em></td>
+<td>generally problems with a quantitative response</td>
+</tr>
+<tr class="even">
+<td><em>classification</em></td>
+<td>generally problems with a qualitative response</td>
+</tr>
+</tbody>
+</table>
+<p>The <em>regression</em> / <em>classification</em> distinction is not always so crisp, e.g., <em>logistic regression</em> produces a qualitative (two-class or binary) reponse. As such, it is often used as a classification method but what it is really doing is estimating class probabilities, which is why it is thought of as a regression method as well. Some methods do both: <em><span class="math inline">\(K\)</span>-nearest neighbors</em> and <em>boosting</em> can be used in both cases.</p>
+</div>
+</div>
+<div id="section-6" class="section level2">
+<h2>2.2</h2>
+<p><strong>Assessing model accuracy</strong></p>
+<p>There is no one model that is best and therefore it is important to know how many models work in order to select the best model for given data.</p>
+<div id="section-7" class="section level3">
+<h3>2.2.1</h3>
+<p><strong>Measuring the quality of fit</strong></p>
+<p>In order to measure how well a model’s predicitons perform you need to quantify the extent to which the predicted response for an observation matched the true response for that observation. For regression, a common approach is to use the <em>mean squared error</em></p>
+<p><span class="math display">\[
+MSE=\frac{1}{n}\sum^{n}_{i=1}(y_{i} \ - \ \hat{f}(x_{i}))^{2}
+\tag{2.5}
+\]</span></p>
+<table>
+<colgroup>
+<col width="13%" />
+<col width="86%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Math</strong></th>
+<th><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\hat{f}(x_{i})\)</span></td>
+<td>the prediction that <span class="math inline">\(\hat{f}\)</span> gives for the <span class="math inline">\(i\)</span>th observation</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(MSE\)</span></td>
+<td>will be small if the predicted responses are very close to the true responses</td>
+</tr>
+</tbody>
+</table>
+<p>We want to evaluate errors for both the test and the training data and it is important to keep in mind that there could be low <span class="math inline">\(MSE\)</span> for training and then high <span class="math inline">\(MSE\)</span> for test; it is important to always measure both but in terms of a model’s ability to predict unseen data, test <span class="math inline">\(MSE\)</span> is of paramount importance.</p>
+<p>For a large number of test observations we could compute the average squared test error for these observations <span class="math inline">\((x_{0},y_{0})\)</span> because we want the smallest possible test <span class="math inline">\(MSE\)</span></p>
+<p><span class="math display">\[ 
+Ave(y_{0} \ - \ \hat{f}(x_{0}))^{2} 
+\tag{2.6}
+\]</span></p>
+<p>Using data the model has not been trained on (the <em>test</em> data) is the best way to evaluate a given model because trying to minimize training <span class="math inline">\(MSE\)</span> does not impact whether or not test <span class="math inline">\(MSE\)</span> will be equally low.</p>
+<pre class="r"><code>income %&gt;%
+  ggplot(aes(x = income, y = education)) +
+  geom_jitter(aes(color = seniority)) +
+  geom_smooth(method = &quot;lm&quot;, se = F, color = &quot;orange&quot;, linetype = 2) +
+  geom_smooth(method = &quot;loess&quot;, se = F, color = &quot;black&quot;, linetype = 2) +
+  scale_color_distiller(palette = &quot;Spectral&quot;) +
+  theme_ipsum_rc()</code></pre>
+<p><img src="02-statistical-learning_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Flexibility for linear models can be seen by how closely the <span class="math inline">\(\hat{f}\)</span> line matches the data. Linear regression is a straight line with a loess line appearing <em>smoother</em> than the linear regression line. A <em>smoothing spline</em> can be fit but there is a tradeoff between how well it matches the data and how closely it matches the true <span class="math inline">\(f\)</span>–the closer a model gets to the true form of <span class="math inline">\(f\)</span> the better the predictions will be.</p>
+</div>
+<div id="section-8" class="section level3">
+<h3>2.2.2</h3>
+<p><strong>The bias-variance tradeoff</strong></p>
+<p>There are two competing properties of a statistical learning model:</p>
+<ul>
+<li><em>variance</em></li>
+<li><em>bias</em></li>
+</ul>
+<p>It will not be explored in the book but mathematically it is possible to show the expected test <span class="math inline">\(MSE\)</span> for a given value, <span class="math inline">\(x_{0}\)</span>, as always being decomposed into the sum of three fundamental quantities:</p>
+<ul>
+<li>the <strong>variance</strong> of <span class="math inline">\(\hat{f}(x_{0})\)</span></li>
+<li>the squared <strong>bias</strong> of <span class="math inline">\(\hat{f}(x_{0})\)</span></li>
+<li>the <strong>variance</strong> of the error term <span class="math inline">\(\epsilon\)</span></li>
+</ul>
+<p><span class="math display">\[
+E(y_{0} \ - \ \hat{f}(x_{0}))^{2} \ = \ 
+Var(\hat{f}(x_{0})) \ + [Bias(\hat{f}(x_{0}))]^{2} \ + 
+\ Var(\epsilon)
+\tag{2.7}
+\]</span></p>
+<table>
+<colgroup>
+<col width="13%" />
+<col width="86%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Math</strong></th>
+<th><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(E(y_{0} \ - \ \hat{f}(x_{0}))^{2}\)</span></td>
+<td>the <em>expected test MSE</em> and refers to the average test MSE that we would obtain if we repeatedly estimated <span class="math inline">\(f\)</span> using a larg number of training sets and tested each at <span class="math inline">\(x_{0}\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(Var(\epsilon)\)</span></td>
+<td>the irreducible error</td>
+</tr>
+<tr class="odd">
+<td><em>varience</em></td>
+<td>the amount by which <span class="math inline">\(\hat{f}\)</span> would change if we estimated it using a different training set, i.e., if the difference between the results, shapes of <span class="math inline">\(\hat{f}\)</span>, vary widely then small changes in training set can result in big changes in <span class="math inline">\(\hat{f}\)</span>, which means there is no good approximation / estimate of <span class="math inline">\(f\)</span> <strong>more flexible == ⬆️ varience</strong></td>
+</tr>
+<tr class="even">
+<td><em>bias</em></td>
+<td>the error that is introduced by approximating a real-life problem (that is much more complicated) with a much simplier model, e.g., linear regression assumes a linear relationship, which is unlikely and results in some <em>bias</em> in the estimate of <span class="math inline">\(f\)</span> <strong>more flexable == ⬇️ bias</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The way that bias and variance are interconnected is known as the <em>bias-varience tradeoff</em> and good test set performance of a statistical learning model requires both low variance and low squared bias. It’s a tradeoff because it is much easier to produce a model with either ⬇️bias and ⬆️variance (e.g., fit line hitting <em>every</em> data point) or ⬆️bias and ⬇️variance (e.g., horizontal fit line that just ignores the data). It isn’t always possible to compute the MSE, bias, or variance but this relationship is important as a foundation for statistical learning.</p>
+<p><strong>However:</strong> minimizing bias (as with a highly flexible and complex model) does not guarantee the model will outperform a simpler one.</p>
+</div>
+<div id="section-9" class="section level3">
+<h3>2.2.3</h3>
+<p><strong>The classification setting</strong></p>
+<p>The regression setting concepts <em>do</em> transfer over to the classification setting with only minimal modification (e.g., <span class="math inline">\(y_{i}\)</span> is not numerical). Suppose we seek to estimate <span class="math inline">\(f\)</span> on the basis of training observations <span class="math inline">\({(x_{1},y_{1}), \ldots , (x_{n},y_{n})}\)</span> where <span class="math inline">\(y_{1}, \ldots , y_{n}\)</span> are qualitative. The most common way to quantify the accuracy of our estimate <span class="math inline">\(\hat{f}\)</span> is the training <em>error rate</em>, i.e., the proportion of mistakes that are made if we apply our estimate <span class="math inline">\(\hat{f}\)</span> to the training observations:</p>
+<p><span class="math display">\[
+\frac{1}{n} \sum^{n}_{i=1} \ I(y_i \neq \hat{y}_{i})
+\tag{2.8}
+\]</span></p>
+<table>
+<colgroup>
+<col width="13%" />
+<col width="86%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Math</strong></th>
+<th><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\hat{y}_{i}\)</span></td>
+<td>the predicted class label for the <span class="math inline">\(i\)</span>th observation using <span class="math inline">\(\hat{f}\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(I(y_i \neq \hat{y}_{i})\)</span></td>
+<td>is an <em>indicator variable</em> that equals 1 if <span class="math inline">\(y_i \neq \hat{y}_{i}\)</span> and 0 if <span class="math inline">\(y_i = \hat{y}_{i}\)</span>. If <span class="math inline">\(I(y_i \neq \hat{y}_{i})=0\)</span> then the <span class="math inline">\(i\)</span>th observation was clasified correctly; otherwise, it was misclassified</td>
+</tr>
+</tbody>
+</table>
+<p>The equation above calculates the fraction of incorrect classifications and is called the <em>training error rate</em> because it is computed on the data that was used to train our classifier.</p>
+<p>The error rates that result from applying the classifier to test observations that were not used in training is called the <em>test error</em> rate and is associated with a set of test observations of the form <span class="math inline">\((x_{0},y_{0})\)</span> is given by</p>
+<p><span class="math display">\[
+Ave \ (I(y_{0}\neq \hat{y}_{0}))
+\tag{2.9}
+\]</span></p>
+<table>
+<colgroup>
+<col width="13%" />
+<col width="86%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Math</strong></th>
+<th><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\hat{y}_{0}\)</span></td>
+<td>is the predicted class label that results from applying the classifier to the test observation with predictor <span class="math inline">\(x_{0}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>A <em>good</em> classifier == ⬇️test error</p>
+<div id="bayes-classifier" class="section level4">
+<h4>Bayes classifier</h4>
+<p>It can be proven<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> that the test error rate given is minimized, on average, by a very simple classifier that <em>assigns each observation to the most likely class, given its predictor value</em>, i.e., just assign a test observation with predictor vector <span class="math inline">\(x_{0}\)</span> to the class <span class="math inline">\(j\)</span> for which ⬇️ is largest</p>
+<p><span class="math display">\[
+\Pr(Y=j \ | \ X=x_{0})
+\tag{2.10}
+\]</span></p>
+<table>
+<thead>
+<tr class="header">
+<th><strong>Math</strong></th>
+<th><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\Pr(A\)</span> | <span class="math inline">\(B)\)</span></td>
+<td>means it’s a <em>conditional probability</em></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(Y=j\)</span></td>
+<td>the <span class="math inline">\(\Pr\)</span> (probability) that <span class="math inline">\(Y=j\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(x_{0}\)</span></td>
+<td>given the observed predictor vector <span class="math inline">\(x_{0}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>The equation ⬆️ is called the <em>Bayes classifier</em></p>
+<p>In a two class problem where there are only two possible response values, say <em>class 1</em> or <em>class 2</em>, the Bayes classifier corresponds to predicting <em>class 1</em> if <span class="math inline">\(\Pr(Y=1|X=x_{0}) &gt; 0.5\)</span>, and <em>class 2</em> otherwise (<span class="math inline">\(\Pr(Y=1|X=x_{0}) &lt; 0.5\)</span>). If the probability == <span class="math inline">\(0.5\)</span>; exactly 50%, those probabilities are in the <em>Bayes decision boundary</em>.</p>
+<p>The Bayes classifier produces the lowest possible test error rate, called the <em>Bayes error rate</em>. Since the Bayes classifier will <em>always</em> choose the class for which <span class="math inline">\(\Pr(Y=j \ | \ X=x_{0})\)</span> is the largest, the error rate at <span class="math inline">\(X=x_{0}\)</span> will be <span class="math inline">\(1-\max_{j}\Pr(Y=j|X=x_{0})\)</span>. The overall Bayes error rate is given by</p>
+<p><span class="math display">\[
+1-E \left(\max_{j}\Pr(Y=j|X)\right)
+\tag{2.11}
+\]</span></p>
+<table>
+<colgroup>
+<col width="13%" />
+<col width="86%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Math</strong></th>
+<th><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(1-E\)</span></td>
+<td>Where the expectation averages the <span class="math inline">\(\Pr\)</span> over all possible values of <span class="math inline">\(X\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\max\)</span></td>
+<td>I think this relates to the maximum probability for a class from <span class="math inline">\(\Pr(Y=j \ | \ X=x_{0})\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="k-nearest-neighbors" class="section level4">
+<h4>K-Nearest Neighbors</h4>
+<p>In theory it would be great to always use the Bayes classifier for predicting qualitative responses but for real data we do not know the conditional distribution of <span class="math inline">\(Y\)</span> given <span class="math inline">\(X\)</span> so computing the Bayes classifier is impossible. <strong>The Bayes Classifier is the unatainable gold standard against which other methods should be compared</strong></p>
+<p>K-Nearest Neighbors (KNN) is one such method that attempts to estimate the conditional distribution of <span class="math inline">\(Y\)</span> given <span class="math inline">\(X\)</span> and then classify a given observation to the class with the highest <em>estimated</em> probability.</p>
+<p>Given a positive integer <span class="math inline">\(K\)</span> and a test observation <span class="math inline">\(x_{0}\)</span>, the KNN classifier first identifies the K points in the training data that are closest to <span class="math inline">\(x_{0]\)</span> represented by <span class="math inline">\(\mathcal{N}_{o}\)</span>. It then estimates the conditional probability for class <span class="math inline">\(j\)</span> as the fraction of points in <span class="math inline">\(\mathcal{N}_{0}\)</span> whose response values equal <span class="math inline">\(j\)</span></p>
+<p><span class="math display">\[
+\Pr(Y = j \ | \ X=x_{0}) = \frac{1}{K}\sum_{i\in \mathcal{N}_{0}} \ I(y_{i}=j)
+\tag{2.12}
+\]</span></p>
+<table>
+<colgroup>
+<col width="13%" />
+<col width="86%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Math</strong></th>
+<th><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(K\)</span></td>
+<td>positive integer</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(x_{0}\)</span></td>
+<td>a test observation</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\mathcal{N}_{0}\)</span></td>
+<td>the <span class="math inline">\(K\)</span> points in the training data closest to <span class="math inline">\(x_{0}\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(j\)</span></td>
+<td>conditional probability for class</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\Pr(Y=j\)</span> | <span class="math inline">\(X=x_{0})\)</span></td>
+<td>applies Bayes classifier (2.10) on the test observation <span class="math inline">\(x_{0}\)</span> to the class with the largest probability</td>
+</tr>
+</tbody>
+</table>
+<p>Despite KNN’s simple approach, it can often produce classifiers that are surprisingly close to the optimal Bayes classifier.</p>
+<p>The choice of <span class="math inline">\(K\)</span> has a drastic effect on the KNN classifier obtained. As <span class="math inline">\(K\)</span> ⬆️ the method becomes less flexible and produces a decision boundary that is close to linear <strong>low-variance / high-bias</strong>. As <span class="math inline">\(K\)</span> ⬇️ the method becomes too flexible and finds patterns in the data that don’t correspond to the Bayes decision boundary <strong>high-variance / low-bias</strong>.</p>
+<p>Therefore, choosing the correct level of flexibility in both the regression and classification settings is <em>critical</em> to success for any statistical learning method.</p>
+</div>
+</div>
+</div>
+<div id="section-10" class="section level2">
+<h2>2.3</h2>
+<p>Skip</p>
+</div>
+<div id="section-11" class="section level2">
+<h2>2.4</h2>
+<p><strong>Exercises</strong></p>
+<div id="conceptual" class="section level3">
+<h3>Conceptual</h3>
+<ol style="list-style-type: decimal">
+<li><p>For each of parts (a) through (d), indicate whether we would generally expect the performance of a flexible statistical learning method to be better or worse than an inflexible method (<strong>justify your answer</strong>)</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>The sample size <span class="math inline">\(n\)</span> is extremely large, and the number of predictors <span class="math inline">\(p\)</span> is small <br> <br> With few predictors but many observations, a flexible model might perform <strong>worse</strong> since the number of observations should allow for a more rigid fit line, e.g. regression, to work well since a very flexible model would spend too much time trying to intersect every observation and will also create more variance which might make future fits vary widely given the volume of observations.</p></li>
+<li><p>The number of predictors <span class="math inline">\(p\)</span> is extremely large, and the number of observations <span class="math inline">\(n\)</span> is small <br> <br> Since there are not many observations and many predictors I feel like this is an example that is best suited for a more flexible model (<strong>better</strong>) since a simpler one may have too much bias–this is an asumption though since a simpler model still <em>could</em> outperform a more flexible one. I would need to see the shape of the observations.</p></li>
+<li><p>The relationship between the predictors and response is highly non-linear <br> <br> Given non-linearity a non-parametric model that is flexible would, in my mind, work <strong>better</strong> since a simpler parametric model relies on linearity</p></li>
+<li><p>The variance of the error terms, i.e., <span class="math inline">\(\sigma^{2}=Var(\epsilon)\)</span>, is extremely high <br> <br> If the error term is extremely high then that means bias and variance need to both be extremely low for the prediction to have any chance of being successful. This means that an inflexible (for low bias and low variance) is preferred, so a flexible model would be <strong>worse</strong>.</p></li>
+</ol></li>
+<li><p>Exlain whether each scenario is a classification or regression problem, and indicate whether we are most interested in inference or prediction. Finally, provide observations (<span class="math inline">\(n\)</span>) and predictors(<span class="math inline">\(p\)</span>)</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>We collect a set of data on the top 500 firms in the US. For each firm we record profit, number of employees, industry, and the CEO salary. We are interested in understanding which factors affect CEO salary. <br> <br> This is a <strong>regression</strong> problem most interested in <strong>inference</strong> with <span class="math inline">\(n=500\)</span> and <span class="math inline">\(p_1\)</span> = <code>profit</code>, <span class="math inline">\(p_2\)</span> = <code>n_employees</code>, <span class="math inline">\(p_3\)</span> = <code>industry</code></p></li>
+<li><p>We are considering launching a new product and wish to know whether it will be a success or a failure. We collect data on 20 similar products that were previously launched. For each product we have recorded whether it was a success or failure, price charged for the product, marketing budget, competition price, and ten other variables. <br> <br> This is a <strong>classification</strong> problem most interested in <strong>prediction</strong> (binary response) with <span class="math inline">\(n=20\)</span> and <span class="math inline">\(p_1\)</span> = <code>price_charged</code>, <span class="math inline">\(p_2\)</span> = <code>marketing_budget</code>, <span class="math inline">\(p_3\)</span> = <code>competition_price</code>, <span class="math inline">\(p_4:13\)</span> = some 10 other variables</p></li>
+<li><p>We are interesting in predicting the % change in the US dollar in relation to the weekly changes in the world stock markets. Hence we collect weekly data for all of 2012. For each week we record the % change in the dollar, the % change in the US market, the % change in the British market, and the % change in the German market <br> <br> This seems like a <strong>regression</strong> problem most interested in <strong>prediction</strong> with <span class="math inline">\(n=52\)</span> and <span class="math inline">\(p_1\)</span> = <code>us_percent_change_currency</code>, <span class="math inline">\(p_2\)</span> = <code>uk_percent_change_currency</code>, <span class="math inline">\(p_3\)</span> = <code>german_percent_change_currency</code></p></li>
+</ol></li>
+<li><p>We now revisit the bias-variance decomposition</p>
+<ol style="list-style-type: lower-alpha">
+<li>Provide a sketch of typical (squared) bias, variance, training error, test error, and Bayes (or irreducible) error curves, on a single plot, as we go from less flexible statistical learning methods towards more flexible approaches. The x-axis should represent the amount of flexibility in the method, and the y-axis should represent the values for each curve. There should be five curves. Make sure to label each one</li>
+<li>Explain why each of the five curves has the shape displayed in part <strong>a</strong>. <br> <br> <strong>Skip</strong></li>
+</ol></li>
+<li><p>You will now think of some real-life applications for statistical learning</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>Describe three real-life applications in which classification might be useful. Describe the response, as well as the predictors. Is the goal of each application inference or prediction? Explain your answer. <br> <br> <strong>Skip</strong></p></li>
+<li><p>Describe three real-life applications in which regression might be useful. Describe the response, as well as the predictors. Is the goal of each application inference or prediction? Explain your answer. <br> <br> <strong>Skip</strong></p></li>
+<li><p>Describe three real-life applications in which cluster analysis might be useful. <br> <br> <strong>Skip</strong></p></li>
+</ol></li>
+<li><p>What are the advantages and disadvantages of a very flexible (versus a less flexible) approach for regression or classification? Under what circumstances might a more flexible approach be preferred to a less flexible approach? When might a less flexible approach be preferred?</p>
+<ul>
+<li>The <em>advantages</em> of a very flexible model: lower overall bias and better possible prediction.</li>
+<li>The <em>disadvantage</em> of a very flexible model: can lead to overfitting, less interpretable and therefore less inference (possibly), can produce high variance.</li>
+</ul></li>
+<li><p>Describe the differences between a parametric and a non-parametric statistical learning approach. What are the advantages of a parametric approach to regression or classification (as opposed to a nonparametric approach)? What are its disadvantages?</p>
+<ul>
+<li><strong>Parametric</strong>: a parametric model is asuming the shape of the true <span class="math inline">\(f\)</span>will produce estimates that mimic the asumed shape–this can be beneficial when the data, at least when first plotting, seems to have a shape to it already–this can produce good prediction and high interpretability, which will help you better undstand the variables</li>
+<li><strong>Non-parametric</strong>: a non-parametric model does not assume anything about the shape of true <span class="math inline">\(f\)</span>–it looks at the data and sees if it can determine some kind of shape that way–this can be good for increasing prediction accuracy but can lead to over-fitting which cannot account for new data (e.g., high variance)</li>
+</ul></li>
+<li><p>The table below provides a training data set containing six observations, three predictors, and one qualitative response variable.</p></li>
+</ol>
+<pre class="r"><code>train &lt;- tribble(
+  ~observation, ~x_1, ~x_2, ~x_3, ~y,
+  1,  0, 3, 0, &quot;Red&quot;,
+  2,  2, 0, 0, &quot;Red&quot;,
+  3,  0, 1, 3, &quot;Red&quot;,
+  4,  0, 1, 2, &quot;Green&quot;,
+  5, -1, 0, 1, &quot;Green&quot;,
+  6,  1, 1, 1, &quot;Red&quot;
+)</code></pre>
+<p>Suppose we wish to use this data set to make a prediction for <span class="math inline">\(Y\)</span> when <span class="math inline">\(X_1 = X_2 = X_3 = 0\)</span> using <span class="math inline">\(K\)</span>-nearest neighbors.</p>
+<ol style="list-style-type: lower-alpha">
+<li>Compute the Euclidean distance between each observation and the test point, $X_1 = X_2 = X_3 = 0 $</li>
+</ol>
+<pre class="r"><code>euclid_dist &lt;- function(x1) {
+  out &lt;- sqrt(sum((x1 - (x1 * 0)) ^ 2)) 
+  round(out, 2)
+}
+
+euclid &lt;- train %&gt;%
+  group_by(observation) %&gt;%
+  mutate(euclid_dist = euclid_dist(c(x_1, x_2, x_3))) %&gt;%
+  arrange(euclid_dist)
+
+euclid</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["observation"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["x_1"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["x_2"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["x_3"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["y"],"name":[5],"type":["chr"],"align":["left"]},{"label":["euclid_dist"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"5","2":"-1","3":"0","4":"1","5":"Green","6":"1.41"},{"1":"6","2":"1","3":"1","4":"1","5":"Red","6":"1.73"},{"1":"2","2":"2","3":"0","4":"0","5":"Red","6":"2.00"},{"1":"4","2":"0","3":"1","4":"2","5":"Green","6":"2.24"},{"1":"1","2":"0","3":"3","4":"0","5":"Red","6":"3.00"},{"1":"3","2":"0","3":"1","4":"3","5":"Red","6":"3.16"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<ol start="2" style="list-style-type: lower-alpha">
+<li><p>What is our prediction with <span class="math inline">\(K=1\)</span>? Why? <br> <code>observation = 5</code> has the lowest distance so <span class="math inline">\(K=1\)</span> = <code>Green</code></p></li>
+<li><p>What is our prediction with <span class="math inline">\(K=3\)</span>? Why? <br> <code>observation = 2</code> has the third lowest distance so <span class="math inline">\(K=3\)</span> = <code>Red</code></p></li>
+<li><p>If the Bayes decision boundary in this problem is highly non-linear, then would we expect <em>the best</em> value of <span class="math inline">\(K\)</span> to be large or small? Why? <br> I’m not sure about this.</p></li>
+</ol>
+</div>
+<div id="applied" class="section level3">
+<h3>Applied</h3>
+<ol start="8" style="list-style-type: decimal">
+<li>This exercise relates to the <code>College</code> data set, which can be found in the file <code>College.csv</code>. It contains a number of variables for 777 different universities and colleges in the US. The variables are</li>
+</ol>
+<ul>
+<li><code>Private</code>: Public/private indicator</li>
+<li><code>Apps</code>: Number of applications received</li>
+<li><code>Accept</code>: Number of applicants accepted</li>
+<li><code>Enroll</code>: Number of new students enrolled</li>
+<li><code>Top10perc</code>: New students from top 10 % of high school class</li>
+<li><code>Top25perc</code>: New students from top 25 % of high school class</li>
+<li><code>F.Undergrad</code>: Number of full-time undergraduates</li>
+<li><code>P.Undergrad</code>: Number of part-time undergraduates</li>
+<li><code>Outstate</code>: Out-of-state tuition</li>
+<li><code>Room.Board</code>: Room and board costs</li>
+<li><code>Books</code>: Estimated book costs</li>
+<li><code>Personal</code>: Estimated personal spending</li>
+<li><code>PhD</code>: Percent of faculty with Ph.D.’s</li>
+<li><code>Terminal</code>: Percent of faculty with terminal degree</li>
+<li><code>S.F.Ratio</code>: Student/faculty ratio</li>
+<li><code>perc.alumni</code>: Percent of alumni who donate</li>
+<li><code>Expend</code>: Instructional expenditure per student</li>
+<li><code>Grad.Rate</code>: Graduation rate</li>
+</ul>
+<ol style="list-style-type: lower-alpha">
+<li>skip</li>
+<li>skip</li>
+<li>below ⬇️</li>
+</ol>
+<p><strong>iii. plot side-by-side boxplots of <code>Outstate</code> v <code>Private</code></strong></p>
+<pre class="r"><code>college &lt;- ISLR::College %&gt;% 
+  janitor::clean_names() %&gt;%
+  rownames_to_column(var = &quot;college_name&quot;)
+
+left &lt;- college %&gt;%
+  ggplot(aes(x = private, y = outstate, fill = private)) +
+  geom_boxplot(show.legend = F) +
+  labs(title = &quot;Do out of state students mostly go to private universities?&quot;)
+
+right &lt;- college %&gt;%
+  count(private) %&gt;%
+  ggplot(aes(x = private, y = n, fill = private)) +
+  geom_col()
+
+left + right &amp; theme_ipsum_rc() </code></pre>
+<p><img src="02-statistical-learning_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><strong>iv. create a new qualitative variable called <code>Elite</code>, by <em>binning</em> the <code>Top10perc</code> variable. We are going to divide universities into two groups based on whether or not the proportion of students coming from the top 10% of their high school classes exceeds 50%–produce a boxplot of <code>Outstate</code> v <code>Elite</code></strong></p>
+<pre class="r"><code>college %&gt;%
+  summarise_at(
+    vars(top10perc),
+    funs(min, mean, sd, max))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["min"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["mean"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["sd"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["max"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"27.55856","3":"17.64036","4":"96"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>college &lt;- college %&gt;%
+  group_by(college_name) %&gt;%
+  mutate(elite = if_else(top10perc &gt;= 50, &quot;Yes&quot;, &quot;No&quot;)) %&gt;%
+  ungroup()</code></pre>
+<pre class="r"><code>left &lt;- college %&gt;%
+  ggplot(aes(x = elite, y = outstate, fill = elite)) +
+  geom_boxplot(show.legend = F) +
+  labs(
+    title = &quot;Do &#39;Elite&#39; students come from out of state?&quot;,
+    subtitle = &quot;Elite means &gt;= 50% new students from top 10% of High School&quot;
+  )
+
+right &lt;- college %&gt;%
+  count(elite) %&gt;%
+  ggplot(aes(x = elite, y = n, fill = elite)) +
+  geom_col()
+
+left + right &amp; theme_ipsum_rc()</code></pre>
+<p><img src="02-statistical-learning_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p><strong>v. create some histograms with differing numbers of bins for a few of the quantitative variables</strong></p>
+<pre class="r"><code>college %&gt;%
+  ggplot(aes(perc_alumni, fill = private)) + 
+  geom_histogram(bins = 25, alpha = .5) +
+  facet_wrap(~private) +
+  labs(title = &quot;Do private universities have more alumnai donations?&quot;) +
+  theme_ipsum_rc()</code></pre>
+<p><img src="02-statistical-learning_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><strong>vi. do some EDA!</strong></p>
+<pre class="r"><code>college %&gt;%
+  ggplot(aes(perc_alumni, fill = private)) + geom_density(alpha = .5) +
+  facet_wrap(~private) +
+  labs(title = &quot;Do private universities have more alumnai donations?&quot;) +
+  theme_ipsum_rc()</code></pre>
+<p><img src="02-statistical-learning_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<ol start="9" style="list-style-type: decimal">
+<li><p>This exercise involves the <code>Auto</code> data set studied in the lab. Make sure that the missing values have been removed from the data</p>
+<ol style="list-style-type: lower-alpha">
+<li>which of the predictors are quantitative, and which are qualitative?</li>
+<li>what is the <em>range</em> of each quantitative predictor? You can answer this using the <code>range()</code> function</li>
+<li>what is the mean and standard deviation of each quantitative predictor?</li>
+<li>now remove the 10th through 85th observations. What is the range, mean, and standard deviation of each predictor in the subset of the data that remains?</li>
+<li>using the full data set, investigate the predictors graphically, using scatterplots or other tools of your choice. Create some plots highlighting the relationships among the predictors. Comment on your findings</li>
+<li>suppose that we wish to predict gas mileage (<code>mpg</code>) on the basis of the other variables. Do your plots suggest that any of the other variables might be useful in predicting <code>mpg</code>? Justify your answer</li>
+</ol></li>
+<li><p>This exercise involves the <code>Boston</code> housing data set</p>
+<ol style="list-style-type: lower-alpha">
+<li>to begin, load in the Boston data set. The Boston data set is part of the <code>MASS</code> library in <code>R</code>–load the data and explore the columns</li>
+<li>make some pairwise scatterplots of the predictors (columns) in this data set. Describe your findings</li>
+<li>are any of the predictors associated with per capita crime rate? If so, explain the relationship</li>
+<li>do any of the suburbs of Boston appear to have particularly high crime rates? Tax rates? Pupil-teacher ratios? Comment on the range of each predictor</li>
+<li>how many of the suburbs in this data set bound the Charles river?</li>
+<li>what is the median pupil-teacher ratio among the towns in this data set?</li>
+<li>which suburb of Boston has lowest median value of owner- occupied homes? What are the values of the other predictors for that suburb, and how do those values compare to the overall ranges for those predictors? Comment on your findings</li>
+<li>in this data set, how many of the suburbs average more than seven rooms per dwelling? More than eight rooms per dwelling? Comment on the suburbs that average more than eight rooms per dwelling</li>
+</ol></li>
+</ol>
+</div>
+</div>
+</div>
+<div id="definitions" class="section level1">
+<h1>Definitions</h1>
+<table>
+<thead>
+<tr class="header">
+<th><strong>Term</strong></th>
+<th><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<p><br> <br></p>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><span class="math inline">\(f\)</span> here represents the <em>systematic</em> information that <span class="math inline">\(X\)</span> provides about <span class="math inline">\(Y\)</span><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>Outside of the scope of ISLR<a href="#fnref2" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

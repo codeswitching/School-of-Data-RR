@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Robert Mitchell" />
+
+<meta name="date" content="2018-03-17" />
+
+<title>ISLR Chapter 1: Introduction</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 45px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+
+.section h2 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h3 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h4 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h5 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h6 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">ISLR Notes</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-line-chart"></span>
+     
+    Chapter Notes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01-introduction.html">
+        <span class="fa fa-code"></span>
+         
+        Chapter 1
+      </a>
+    </li>
+    <li>
+      <a href="02-statistical-learning.html">
+        <span class="fa fa-code"></span>
+         
+        Chapter 2
+      </a>
+    </li>
+    <li>
+      <a href="03-linear-regression.html">
+        <span class="fa fa-code"></span>
+         
+        Chapter 3
+      </a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="http://www-bcf.usc.edu/~gareth/ISL/">
+    <span class="fa fa-book fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">ISLR Chapter 1: Introduction</h1>
+<h4 class="author"><em>Robert Mitchell</em></h4>
+<h4 class="date"><em>2018-03-17</em></h4>
+
+</div>
+
+
+<p><em>last updated on 2018-05-16</em></p>
+<p><br></p>
+<div id="packages" class="section level1">
+<h1>Packages</h1>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── [1mAttaching packages[22m ───────────────────────────────────────────────────────────────────── tidyverse 1.2.1.[31m9000[39m ──</code></pre>
+<pre><code>## [32m✔[39m [34mggplot2[39m 2.2.1.[31m9000[39m     [32m✔[39m [34mpurrr  [39m 0.2.4     
+## [32m✔[39m [34mtibble [39m 1.4.2          [32m✔[39m [34mdplyr  [39m 0.7.4     
+## [32m✔[39m [34mtidyr  [39m 0.8.0          [32m✔[39m [34mstringr[39m 1.3.1     
+## [32m✔[39m [34mreadr  [39m 1.1.1          [32m✔[39m [34mforcats[39m 0.3.0</code></pre>
+<pre><code>## ── [1mConflicts[22m ───────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## [31m✖[39m [34mdplyr[39m::[32mfilter()[39m masks [34mstats[39m::filter()
+## [31m✖[39m [34mdplyr[39m::[32mlag()[39m    masks [34mstats[39m::lag()
+## [31m✖[39m [34mdplyr[39m::[32mvars()[39m   masks [34mggplot2[39m::vars()</code></pre>
+</div>
+<div id="notes" class="section level1">
+<h1>Notes</h1>
+<p><strong>Statistical Learning</strong> = <em>tools for understanding data</em></p>
+<p>These <em>tools</em> are classified into two buckets:</p>
+<ul>
+<li>supervised</li>
+<li>unsupervised</li>
+</ul>
+<p><strong>Supervised</strong>: a model used for predicting, or estimating an <em>output</em> based on one or more <em>inputs</em> <strong>Unsupervised</strong>: there are inputs but no supervising output; useful for learning relationships and structure from data</p>
+<p>The two classic examples of <em>supervised</em> and <em>unsupervised</em> statistical learning problems are:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Regression</strong> (supervised)</li>
+<li><strong>Classification</strong> (unsupervised)</li>
+</ol>
+<div id="wage-data" class="section level2">
+<h2>Wage data</h2>
+<p>Using <em>regression</em> to predict an employee’s <code>wage</code> given other variables, e.g., <code>age</code>, <code>education</code>, or <code>year</code>. In this case we are predicting a <em>continuous</em> or <em>quantitative</em> variable.</p>
+<pre class="r"><code>wage &lt;- ISLR::Wage %&gt;% janitor::clean_names()</code></pre>
+<pre class="r"><code>wage %&gt;% glimpse()</code></pre>
+<pre><code>## Observations: 3,000
+## Variables: 11
+## $ year       &lt;int&gt; 2006, 2004, 2003, 2003, 2005, 2008, 2009, 2008, 200...
+## $ age        &lt;int&gt; 18, 24, 45, 43, 50, 54, 44, 30, 41, 52, 45, 34, 35,...
+## $ maritl     &lt;fct&gt; 1. Never Married, 1. Never Married, 2. Married, 2. ...
+## $ race       &lt;fct&gt; 1. White, 1. White, 1. White, 3. Asian, 1. White, 1...
+## $ education  &lt;fct&gt; 1. &lt; HS Grad, 4. College Grad, 3. Some College, 4. ...
+## $ region     &lt;fct&gt; 2. Middle Atlantic, 2. Middle Atlantic, 2. Middle A...
+## $ jobclass   &lt;fct&gt; 1. Industrial, 2. Information, 1. Industrial, 2. In...
+## $ health     &lt;fct&gt; 1. &lt;=Good, 2. &gt;=Very Good, 1. &lt;=Good, 2. &gt;=Very Goo...
+## $ health_ins &lt;fct&gt; 2. No, 2. No, 1. Yes, 1. Yes, 1. Yes, 1. Yes, 1. Ye...
+## $ logwage    &lt;dbl&gt; 4.318063, 4.255273, 4.875061, 5.041393, 4.318063, 4...
+## $ wage       &lt;dbl&gt; 75.04315, 70.47602, 130.98218, 154.68529, 75.04315,...</code></pre>
+<p><strong>Figure 1.1</strong></p>
+<pre class="r"><code>wage %&gt;%
+  ggplot(aes(x = age, y = wage)) +
+  geom_jitter() +
+  geom_smooth(method = &quot;loess&quot;, se = F)</code></pre>
+<p><img src="01-introduction_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code>wage %&gt;%
+  ggplot(aes(x = year, y = wage)) +
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;, se = F)</code></pre>
+<p><img src="01-introduction_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>wage %&gt;%
+  ggplot(aes(x = education, y = wage, fill = education)) +
+  geom_boxplot(show.legend = F)</code></pre>
+<p><img src="01-introduction_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="stock-market-data" class="section level2">
+<h2>Stock Market Data</h2>
+<p>In this unsupervised example we want to predict a <em>categorical</em> or <em>qualitative</em> output. In this case, we want to know whether or not we can predict moving in the stock market that is categorized into either an ‘up’ bucket or a ‘down’ bucket. This is known as a <em>classification</em> problem. In this case we have <em>both</em> an input and an output variable.</p>
+<pre class="r"><code>stocks &lt;- ISLR::Smarket %&gt;% janitor::clean_names()</code></pre>
+<pre class="r"><code>stocks %&gt;% glimpse()</code></pre>
+<pre><code>## Observations: 1,250
+## Variables: 9
+## $ year      &lt;dbl&gt; 2001, 2001, 2001, 2001, 2001, 2001, 2001, 2001, 2001...
+## $ lag1      &lt;dbl&gt; 0.381, 0.959, 1.032, -0.623, 0.614, 0.213, 1.392, -0...
+## $ lag2      &lt;dbl&gt; -0.192, 0.381, 0.959, 1.032, -0.623, 0.614, 0.213, 1...
+## $ lag3      &lt;dbl&gt; -2.624, -0.192, 0.381, 0.959, 1.032, -0.623, 0.614, ...
+## $ lag4      &lt;dbl&gt; -1.055, -2.624, -0.192, 0.381, 0.959, 1.032, -0.623,...
+## $ lag5      &lt;dbl&gt; 5.010, -1.055, -2.624, -0.192, 0.381, 0.959, 1.032, ...
+## $ volume    &lt;dbl&gt; 1.1913, 1.2965, 1.4112, 1.2760, 1.2057, 1.3491, 1.44...
+## $ today     &lt;dbl&gt; 0.959, 1.032, -0.623, 0.614, 0.213, 1.392, -0.403, 0...
+## $ direction &lt;fct&gt; Up, Up, Down, Up, Up, Up, Down, Up, Up, Up, Down, Do...</code></pre>
+</div>
+<div id="gene-expression-data" class="section level2">
+<h2>Gene Expression Data</h2>
+<p>What about situations where we only observe input variables? Say we are marketers and we want to better understand our customers by breaking them into separate segments that represent a kind of persona–this is an example of a <em>clustering</em> problem.</p>
+<pre class="r"><code>nci60 &lt;- ISLR::NCI60</code></pre>
+<pre class="r"><code>str(nci60)</code></pre>
+<pre><code>## List of 2
+##  $ data: num [1:64, 1:6830] 0.3 0.68 0.94 0.28 0.485 ...
+##   ..- attr(*, &quot;dimnames&quot;)=List of 2
+##   .. ..$ : chr [1:64] &quot;V1&quot; &quot;V2&quot; &quot;V3&quot; &quot;V4&quot; ...
+##   .. ..$ : chr [1:6830] &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot; ...
+##  $ labs: chr [1:64] &quot;CNS&quot; &quot;CNS&quot; &quot;CNS&quot; &quot;RENAL&quot; ...</code></pre>
+<p>This looks like a weird nested list–not sure how to convert to <code>tibble</code> or if I need to.</p>
+<pre class="r"><code>((80 * 24) + 250) - 1850</code></pre>
+<pre><code>## [1] 320</code></pre>
+</div>
+<div id="brief-history-of-statistical-learning" class="section level2">
+<h2>Brief history of statistical learning</h2>
+<p>Concepts that underlie <em>statistical learning</em> (fairly new term)</p>
+<ul>
+<li>Early 19th centry: Legendre and Gauss publish papers on the <em>method of least squares</em>, which is the earliest form of what we now know as <em>linear regression</em></li>
+<li>1936: Later Fisher proposes <em>linear discriminant analysis</em> to predict qualitative values, e.g., whether a patient lives or dies</li>
+<li>1940’s: various authors put forth an alternative approach, <em>logistic regression</em></li>
+<li>1970’s: Nelder and Wedderburn coined the term <em>generalized linear models</em> for an entire class of statistical learning methods that include both linear and logistic regression</li>
+<li>End of 1970’s: many more techniques to learn from data but all <em>linear</em> methods since fitting <em>non-linear</em> relationships was computationally infeasible at the time.</li>
+<li>1980’s: computing technology finally improved such that non-linear methods were no longer computationally prohibitive</li>
+<li>Mid 1980’s: Breiman, Friedman, Olshen, and Stone introduced <em>classification and regression trees</em>, and were among the first to demonstrate the power of a detailed practical implementation of a method, including <em>cross-validation</em> for model selection</li>
+<li>1986: Hastie and Tibshirani coined the term <em>general additive models</em> for a class of non-linear extension to generalized linear models</li>
+<li>Since that time the field has grown exponentially</li>
+</ul>
+</div>
+<div id="notation" class="section level2">
+<h2>Notation</h2>
+<table>
+<colgroup>
+<col width="13%" />
+<col width="86%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Math</strong></th>
+<th><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(n\)</span></td>
+<td>number of distinct data points or observations in a sample</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(p\)</span></td>
+<td>the number of variables that are available for use in making predictions</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(x_{ij}\)</span></td>
+<td>the value of the <span class="math inline">\(j\)</span>th variable for the <span class="math inline">\(i\)</span>th observation, e.g., <span class="math inline">\(i=1,2,\ldots,n\)</span> and <span class="math inline">\(j=1,2,\ldots,p\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(i\)</span></td>
+<td>index the samples or observations (from 1 to <span class="math inline">\(n\)</span>)</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(j\)</span></td>
+<td>index the variables (from 1 to <span class="math inline">\(p\)</span>)</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\mathbf{X}\)</span></td>
+<td>a <span class="math inline">\(n \times p\)</span> matrix whose <span class="math inline">\((i,j)\)</span>th element is <span class="math inline">\(x_{ij}\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(^{T}\)</span></td>
+<td>the <em>transpose</em> of a matrix or vector</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(y_{i}\)</span></td>
+<td>the <span class="math inline">\(i\)</span>th observation of the variable on which we wish to make our predictions</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\mathbf{a}\)</span></td>
+<td>a vector of length <span class="math inline">\(n\)</span> (always denoted in lower case bold)</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(a\)</span></td>
+<td>a vector not of length <span class="math inline">\(n\)</span> (such as feature vectors) as will scalars</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\mathbf{A}\)</span></td>
+<td>Matrices (bold capital)</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(A\)</span></td>
+<td>Random variables</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(a \in \mathbb{R}\)</span></td>
+<td>the dimention of a particular object (<span class="math inline">\(a\)</span>)</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(a \in \mathbb{R}^{k}\)</span></td>
+<td>indicate it is a vector of length <span class="math inline">\(k\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\mathbf{a} \in \mathbb{R}^{n}\)</span></td>
+<td>if it is of length <span class="math inline">\(n\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\mathbf{A} \in \mathbb{R}^{r \times s}\)</span></td>
+<td>Object is a <span class="math inline">\(r \times s\)</span> matrix</td>
+</tr>
+</tbody>
+</table>
+<div id="matrices" class="section level3">
+<h3>Matrices</h3>
+<p>We let <span class="math inline">\(\mathbf{X}\)</span> denote a <span class="math inline">\(n \times p\)</span> matrix whose <span class="math inline">\((i,j)\)</span>th element is <span class="math inline">\(x_{ij}\)</span></p>
+<p><span class="math display">\[ 
+\mathbf{X}=\left\{ 
+  \begin{matrix} 
+    x_{11} &amp; x_{12} &amp; \cdots &amp; x_{1p} \\ 
+    x_{21} &amp; x_{22} &amp; \cdots &amp; x_{2p} \\
+    \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+    x_{n1} &amp; x_{n2} &amp; \cdots &amp; x_{np}
+\end{matrix}\right\} 
+\]</span></p>
+<p>It is useful to visualize <span class="math inline">\(\mathbf{X}\)</span> as a data frame of numbers with <span class="math inline">\(n\)</span> rows and <span class="math inline">\(p\)</span> columns. We are usually interested in the rows of <span class="math inline">\(\mathbf{X}\)</span>, which we write as <span class="math inline">\(x_{1}, x_{2}, \ldots , x_{n}\)</span>.</p>
+</div>
+<div id="vectors" class="section level3">
+<h3>Vectors</h3>
+<p>Here <span class="math inline">\(x_{i}\)</span> is a vector of length <span class="math inline">\(p\)</span>, containing the <span class="math inline">\(p\)</span> variable measurements for the <span class="math inline">\(i\)</span>th observation</p>
+<p><span class="math display">\[
+x_{i}=\left\{
+\begin{matrix}
+  x_{i1} \\
+  x_{i2} \\
+  \vdots \\
+  x_{ip} \\
+\end{matrix}\right\}
+\]</span></p>
+<p>Vectors by default are represented as columns.</p>
+<p>An example from the <code>wage</code> data: <span class="math inline">\(x_{i}\)</span> is a vector of length 12, consisting of <code>year</code>, <code>age</code>, <code>wage</code>, and other values for the <span class="math inline">\(i\)</span>th individual. For the columns of <span class="math inline">\(\mathbf{X}\)</span> we write <span class="math inline">\(\mathbf{x}_{1}, \mathbf{x}_{2}, \ldots , \mathbf{x}_{p}\)</span> each is a vector of length <span class="math inline">\(n\)</span>, e.g.:</p>
+<p><span class="math display">\[
+\mathbf{x}_j=\left\{
+\begin{matrix}
+  x_{1j} \\
+  x_{2j} \\
+  \vdots \\
+  x_{nj}
+\end{matrix}\right\}
+\]</span></p>
+</div>
+<div id="transpose" class="section level3">
+<h3>Transpose</h3>
+<p>The <code>wage</code> data, <span class="math inline">\(\mathbf(x)_1\)</span> contains the <span class="math inline">\(n=3000\)</span> values for <code>year</code>, which can be written in two ways:</p>
+<p>First <span class="math display">\[
+\mathbf{X}=(\mathbf{x}_{1} \ \mathbf{x}_{2} \cdots \mathbf{x}_{p})
+\]</span></p>
+<p>Second</p>
+<p><span class="math display">\[
+\mathbf{X}=\left\{ 
+\begin{matrix}
+  x^{T}_{1} \\
+  x^{T}_{2} \\
+  \vdots \\
+  x^{T}_{n}
+\end{matrix}\right\} 
+\]</span></p>
+</div>
+<div id="multiplying-matrices" class="section level3">
+<h3>Multiplying matrices</h3>
+<p>Suppose <span class="math inline">\(\mathbf{A}\in\mathbb{R}^{r \times d}\)</span> and <span class="math inline">\(\mathbf{B}\in\mathbb{R}^{d \times s}\)</span>. The product of <span class="math inline">\(\mathbf{A}\)</span> and <span class="math inline">\(\mathbf{B}\)</span> is denoted <span class="math inline">\(\mathbf{AB}\)</span>. The <span class="math inline">\((ij)\)</span>th element of <span class="math inline">\(\mathbf{AB}\)</span> is computed by multiplying each element of the <span class="math inline">\(i\)</span>th row of <span class="math inline">\(\mathbf{A}\)</span> by the corresponding element of the <span class="math inline">\(j\)</span>th column of <span class="math inline">\(\mathbf{B}\)</span></p>
+$$ ={
+<span class="math display">\[\begin{matrix} 
+    1 &amp; 2 \\ 
+    3 &amp; 4 
+  \end{matrix}\]</span>
+<p>}</p>
+<p> and  </p>
+={
+<span class="math display">\[\begin{matrix} 
+    5 &amp; 6 \\ 
+    7 &amp; 8 
+  \end{matrix}\]</span>
+<p>} $$</p>
+<p>Then:</p>
+<p><span class="math display">\[
+\mathbf{AB}=\left\{
+  \begin{matrix} 
+    1 &amp; 2 \\ 
+    3 &amp; 4 
+  \end{matrix}\right\}
+  \left\{\begin{matrix} 
+    5 &amp; 6 \\ 
+    7 &amp; 8 
+  \end{matrix}\right\} = 
+  \left\{\begin{matrix} 
+    1 \times 5 \ + 2 \times 8 &amp; 1 \times 6 \ + 2 \times 8 \\ 
+    3 \times 5 \ + 4 \times 7 &amp; 3 \times 6 \ + 4 \times 8 
+  \end{matrix}\right\}=
+  \left\{\begin{matrix} 
+    19 &amp; 22 \\ 
+    43 &amp; 50 
+  \end{matrix}\right\}
+\]</span></p>
+<p>This produces an <span class="math inline">\(r \times s\)</span> matrix. It is only possible to compute <span class="math inline">\(\mathbf{AB}\)</span> if the number of columns of <span class="math inline">\(\mathbf{A}\)</span> are the same length as the number of rows of <span class="math inline">\(\mathbf{B}\)</span></p>
+<p><br></p>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

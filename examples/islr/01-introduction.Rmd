@@ -1,0 +1,245 @@
+---
+title: 'ISLR Chapter 1: Introduction'
+author: "Robert Mitchell"
+date: '2018-03-17'
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    df_print: paged
+---
+
+_last updated on `r Sys.Date()`_
+
+<br>
+
+# Packages
+
+```{r}
+library(tidyverse)
+```
+
+# Notes
+
+__Statistical Learning__ = _tools for understanding data_
+
+These _tools_ are classified into two buckets:
+
++ supervised
++ unsupervised
+
+__Supervised__: a model used for predicting, or estimating an _output_ based on one or more _inputs_
+__Unsupervised__: there are inputs but no supervising output; useful for learning relationships and structure from data
+
+The two classic examples of _supervised_ and _unsupervised_ statistical learning problems are:
+
+1. __Regression__ (supervised)
+2. __Classification__ (unsupervised)
+
+## Wage data
+
+Using _regression_ to predict an employee's `wage` given other variables, e.g., `age`, `education`, or `year`. In this case we are predicting a _continuous_ or _quantitative_ variable.
+
+```{r}
+wage <- ISLR::Wage %>% janitor::clean_names()
+```
+
+```{r}
+wage %>% glimpse()
+```
+
+__Figure 1.1__
+```{r}
+wage %>%
+  ggplot(aes(x = age, y = wage)) +
+  geom_jitter() +
+  geom_smooth(method = "loess", se = F)
+```
+
+```{r}
+wage %>%
+  ggplot(aes(x = year, y = wage)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F)
+```
+
+```{r}
+wage %>%
+  ggplot(aes(x = education, y = wage, fill = education)) +
+  geom_boxplot(show.legend = F)
+```
+
+## Stock Market Data
+
+In this unsupervised example we want to predict a _categorical_ or _qualitative_ output. In this case, we want to know whether or not we can predict moving in the stock market that is categorized into either an 'up' bucket or a 'down' bucket. This is known as a _classification_ problem. In this case we have _both_ an input and an output variable.
+
+```{r}
+stocks <- ISLR::Smarket %>% janitor::clean_names()
+```
+
+```{r}
+stocks %>% glimpse()
+```
+
+## Gene Expression Data
+
+What about situations where we only observe input variables? Say we are marketers and we want to better understand our customers by breaking them into separate segments that represent a kind of persona--this is an example of a _clustering_ problem.
+
+```{r}
+nci60 <- ISLR::NCI60
+```
+
+```{r}
+str(nci60)
+```
+
+This looks like a weird nested list--not sure how to convert to `tibble` or if I need to.
+```{r}
+((80 * 24) + 250) - 1850
+```
+
+## Brief history of statistical learning
+
+Concepts that underlie _statistical learning_ (fairly new term)
+
+* Early 19th centry: Legendre and Gauss publish papers on the _method of least squares_, which is the earliest form of what we now know as _linear regression_
+* 1936: Later Fisher proposes _linear discriminant analysis_ to predict qualitative values, e.g., whether a patient lives or dies
+* 1940's: various authors put forth an alternative approach, _logistic regression_
+* 1970's: Nelder and Wedderburn coined the term _generalized linear models_ for an entire class of statistical learning methods that include both linear and logistic regression
+* End of 1970's: many more techniques to learn from data but all _linear_ methods since fitting _non-linear_ relationships was computationally infeasible at the time.
+* 1980's: computing technology finally improved such that non-linear methods were no longer computationally prohibitive
+* Mid 1980's: Breiman, Friedman, Olshen, and Stone introduced _classification and regression trees_, and were among the first to demonstrate the power of a detailed practical implementation of a method, including _cross-validation_ for model selection
+* 1986: Hastie and Tibshirani coined the term _general additive models_ for a class of non-linear extension to generalized linear models
+* Since that time the field has grown exponentially
+
+## Notation
+
+__Math__ | __Meaning__
+---------|--------------------------------------------------------|
+$n$ | number of distinct data points or observations in a sample 
+$p$ | the number of variables that are available for use in making predictions 
+$x_{ij}$ | the value of the $j$th variable for the $i$th observation, e.g., $i=1,2,\ldots,n$ and $j=1,2,\ldots,p$
+$i$ | index the samples or observations (from 1 to $n$)
+$j$ | index the variables (from 1 to $p$)
+$\mathbf{X}$ | a $n \times p$ matrix whose $(i,j)$th element is $x_{ij}$
+$^{T}$ | the _transpose_ of a matrix or vector
+$y_{i}$ | the $i$th observation of the variable on which we wish to make our predictions
+$\mathbf{a}$ | a vector of length $n$ (always denoted in lower case bold)
+$a$ | a vector not of length $n$ (such as feature vectors) as will scalars
+$\mathbf{A}$ | Matrices (bold capital)
+$A$ | Random variables
+$a \in \mathbb{R}$ | the dimention of a particular object ($a$)
+$a \in \mathbb{R}^{k}$ | indicate it is a vector of length $k$
+$\mathbf{a} \in \mathbb{R}^{n}$ | if it is of length $n$
+$\mathbf{A} \in \mathbb{R}^{r \times s}$ | Object is a $r \times s$ matrix
+
+### Matrices
+
+We let $\mathbf{X}$ denote a $n \times p$ matrix whose $(i,j)$th element is $x_{ij}$
+
+$$ 
+\mathbf{X}=\left\{ 
+  \begin{matrix} 
+    x_{11} & x_{12} & \cdots & x_{1p} \\ 
+    x_{21} & x_{22} & \cdots & x_{2p} \\
+    \vdots & \vdots & \ddots & \vdots \\
+    x_{n1} & x_{n2} & \cdots & x_{np}
+\end{matrix}\right\} 
+$$
+
+It is useful to visualize $\mathbf{X}$ as a data frame of numbers with $n$ rows and $p$ columns. We are usually interested in the rows of $\mathbf{X}$, which we write as $x_{1}, x_{2}, \ldots , x_{n}$.
+
+### Vectors
+
+Here $x_{i}$ is a vector of length $p$, containing the $p$ variable measurements for the $i$th observation
+
+$$
+x_{i}=\left\{
+\begin{matrix}
+  x_{i1} \\
+  x_{i2} \\
+  \vdots \\
+  x_{ip} \\
+\end{matrix}\right\}
+$$
+
+Vectors by default are represented as columns. 
+
+An example from the `wage` data: $x_{i}$ is a vector of length 12, consisting of `year`, `age`, `wage`, and other values for the $i$th individual. For the columns of $\mathbf{X}$ we write $\mathbf{x}_{1}, \mathbf{x}_{2}, \ldots , \mathbf{x}_{p}$ each is a vector of length $n$, e.g.:
+
+$$
+\mathbf{x}_j=\left\{
+\begin{matrix}
+  x_{1j} \\
+  x_{2j} \\
+  \vdots \\
+  x_{nj}
+\end{matrix}\right\}
+$$
+
+### Transpose
+
+The `wage` data, $\mathbf(x)_1$ contains the $n=3000$ values for `year`, which can be written in two ways:
+
+First
+$$
+\mathbf{X}=(\mathbf{x}_{1} \ \mathbf{x}_{2} \cdots \mathbf{x}_{p})
+$$
+
+Second
+
+$$
+\mathbf{X}=\left\{ 
+\begin{matrix}
+  x^{T}_{1} \\
+  x^{T}_{2} \\
+  \vdots \\
+  x^{T}_{n}
+\end{matrix}\right\} 
+$$
+
+### Multiplying matrices
+
+Suppose $\mathbf{A}\in\mathbb{R}^{r \times d}$ and $\mathbf{B}\in\mathbb{R}^{d \times s}$. The product of $\mathbf{A}$ and $\mathbf{B}$ is denoted $\mathbf{AB}$. The $(ij)$th element of $\mathbf{AB}$ is computed by multiplying each element of the $i$th row of $\mathbf{A}$ by the corresponding element of the $j$th column of $\mathbf{B}$
+
+$$
+\mathbf{A}=\left\{
+  \begin{matrix} 
+    1 & 2 \\ 
+    3 & 4 
+  \end{matrix}\right\} 
+  
+\ and \ 
+
+\mathbf{B}=\left\{
+  \begin{matrix} 
+    5 & 6 \\ 
+    7 & 8 
+  \end{matrix}\right\} 
+$$
+
+Then:
+
+$$
+\mathbf{AB}=\left\{
+  \begin{matrix} 
+    1 & 2 \\ 
+    3 & 4 
+  \end{matrix}\right\}
+  \left\{\begin{matrix} 
+    5 & 6 \\ 
+    7 & 8 
+  \end{matrix}\right\} = 
+  \left\{\begin{matrix} 
+    1 \times 5 \ + 2 \times 8 & 1 \times 6 \ + 2 \times 8 \\ 
+    3 \times 5 \ + 4 \times 7 & 3 \times 6 \ + 4 \times 8 
+  \end{matrix}\right\}=
+  \left\{\begin{matrix} 
+    19 & 22 \\ 
+    43 & 50 
+  \end{matrix}\right\}
+$$
+
+This produces an $r \times s$ matrix. It is only possible to compute $\mathbf{AB}$ if the number of columns of $\mathbf{A}$ are the same length as the number of rows of $\mathbf{B}$
+
+<br>

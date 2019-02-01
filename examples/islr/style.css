@@ -1,0 +1,67 @@
+/*
+ *  colors
+ */
+:root {
+  --light-blue:     #0DC8F6;
+  --ruby:           #E71B23;
+  --pale-red:       #E55743;
+  --dark-grey:      #626262;
+  --light-grey:     #767F7F;
+  --pale-black:     #212121;
+  --white:          #FFFFFF;
+  --base03:         #002b36;  /* background */
+  --base02:         #073642;  /* other background */
+  --base01:         #586e75;  /* comments / secondary content */
+  --base1:          #93a1a1;  /* body text / default code / primary content */
+  --base2:          #eee8d5;
+  --base3:          #fdf6e3;
+  --yellow:         #b58900;  /* keyword */
+  --orange:         #cb4b16;  /* constants */
+  --red:            #dc322f;  /* regex, special keywords */
+  --magenta:        #d33682;  /* not sure what to do with this color yet */
+  --violet:         #6c71c4;  /* not sure what to do with this color yet */
+  --blue:           #268bd2;  /* reserved keywords */
+  --cyan:           #2aa198;  /* strings, numbers */
+  --green:          #859900;  /* operators, other keywords */
+}
+
+.navbar {
+  background-color: var(--base02);
+}
+
+.list-group-item.active,
+.list-group-item.active:hover,
+.list-group-item.active:focus {
+  background-color: var(--green);
+  border-color: var(--green);
+}
+
+/*
+ * Solarized Dark
+ * http://ethanschoonover.com/solarized
+ */
+
+pre { background-color: var(--base02); color: var(--base1); }
+code.sourceCode .kw { color: var(--blue); font-weight: 700; } /* Keyword */
+code.sourceCode .dt { color: var(--cyan); } /* DataType */
+code.sourceCode .dv { color: var(--base01); } /* DecVal */
+code.sourceCode .bn { color: var(--orange); } /* BaseN */
+code.sourceCode .fl { color: var(--cyan); } /* Float */
+code.sourceCode .ch { color: var(--red); } /* Char */
+code.sourceCode .st { color: var(--green); } /* String */
+code.sourceCode .co { color: var(--base01); font-style: 100i; } /* Comment */
+code.sourceCode .ot { color: var(--base1); } /* Other */
+code.sourceCode .al { color: var(--green); font-weight: 700; } /* Alert */
+code.sourceCode .fu { color: var(--blue); } /* Function */
+code.sourceCode .er { color: var(--red); font-weight: 700; } /* Error */
+code.sourceCode .wa { color: var(--base1); font-weight: 700i; } /* Warning */
+code.sourceCode .cn { color: var(--orange); } /* Constant */
+code.sourceCode .sc { color: var(--red); } /* SpecialChar */
+code.sourceCode .vs { color: var(--cyan); } /* VerbatimString */
+code.sourceCode .ss { color: var(--cyan); } /* SpecialString */
+code.sourceCode .im { color: var(--red); } /* Import */
+code.sourceCode .va { color: var(--blue); } /* Variable */
+code.sourceCode .cf { color: var(--green); font-weight: 700; } /* ControlFlow */
+code.sourceCode .op { color: var(--yellow); } /* Operator */
+code.sourceCode .bu { color: var(--blue); } /* BuiltIn */
+code.sourceCode .ex { } /* Extension */

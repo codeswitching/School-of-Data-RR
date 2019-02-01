@@ -1,0 +1,24 @@
+name: "ISLR Notes"
+output_dir: "."
+navbar:
+  title: "ISLR Notes"
+  left:
+    - text: "Chapter Notes"
+      icon: fa-line-chart
+      menu:
+        - text: "Chapter 1"
+          icon: fa-code
+          href: 01-introduction.html
+        - text: "Chapter 2"
+          icon: fa-code
+          href: 02-statistical-learning.html
+        - text: "Chapter 3"
+          icon: fa-code
+          href: 03-linear-regression.html
+  right:
+    - icon: fa-book fa-lg
+      href: http://www-bcf.usc.edu/~gareth/ISL/
+output:
+  html_document:
+    theme: yeti
+    css: style.css
